@@ -15,25 +15,6 @@ def create_closure(db: Session, target: models.Machine, store_paths: list[schema
             valid=spath.valid
         )
 
-    for spath in store_paths:
-        for reference in spath.references:
-            if reference not in spaths:
-                raise RuntimeError(f'{reference} is not present in this upload, invalid closure!')
-
-            spaths[spath.path].references.append(spaths[reference])
-
-    closure = list(spaths.values())
-    op = db.query(models.Operator).filter_by(name="Raito").one_or_none()
-    if op is None:
-        op = models.Operator(
-            name="Raito"
-        )
-    d = models.Deployment(
-        operator=op,
-        closure=closure,
-        target_machine=target
-    )
-
     for spath in spaths.values():
         db.execute(insert(models.StorePath).values({
             "path": spath.path,
@@ -44,6 +25,32 @@ def create_closure(db: Session, target: models.Machine, store_paths: list[schema
             "valid": spath.valid
         }).on_conflict_do_nothing(index_elements=['path']))
 
+    db.commit()
+
+    closure = {}
+    for spath in spaths.values():
+        closure[spath.path] = db.query(models.StorePath).filter_by(path=spath.path).one_or_none()
+        if closure[spath.path] is None:
+            raise ValueError(f'{spath.path} was not persisted in the previous transaction')
+
+    # Insert all references.
+    for spath in spaths.values():
+        for reference in spath.references:
+            db.execute(insert(models.references_table).values(
+                referrer_id=closure[spath.path].id,
+                referenced_id=closure[reference.path].id
+            ).on_conflict_do_nothing())
+
+    op = db.query(models.Operator).filter_by(name="Raito").one_or_none()
+    if op is None:
+        op = models.Operator(
+            name="Raito"
+        )
+    d = models.Deployment(
+        operator=op,
+        closure=list(closure.values()),
+        target_machine=target
+    )
     db.add(d)
     db.commit()
 
