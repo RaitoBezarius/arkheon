@@ -1,4 +1,7 @@
+from os import environ as env
+
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
 from . import crud, models, schemas
@@ -24,6 +27,10 @@ def get_or_404(session, model, pk):
         raise HTTPException(status_code=404, detail="Not found")
 
     return o
+
+
+if env.get("MIMIR_ENV") != "production":
+    app.mount("/", StaticFiles(directory="frontend"), name="frontend")
 
 
 @app.post("/record/{machine_identifier}")
