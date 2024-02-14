@@ -8,6 +8,7 @@
         ps.sqlalchemy
         ps.pydantic
       ]))
+      jq
     ];
   };
 }
