@@ -1,10 +1,11 @@
 # From nvd, Apache License 2.0.
-from typing import Union, List, Dict, Optional, Tuple
 import re
-from pathlib import Path
-from .store import StorePath
 import subprocess
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple, Union
+
 from . import models
+from .store import StorePath
 
 SEL_SELECTED = "*"
 SEL_UNSELECTED = "."
@@ -20,6 +21,7 @@ SEL_NO_MANIFESTS = ""
 
 # For the version comparison algorithm, see:
 # https://nixos.org/manual/nix/stable/#ssec-version-comparisons
+
 
 class VersionChunk:
     def __init__(self, chunk_value: Union[int, str]):
@@ -56,6 +58,7 @@ class VersionChunk:
 
         return self._chunk_value == other._chunk_value
 
+
 class Version:
     def __init__(self, text: Optional[str]):
         if text is None:
@@ -71,19 +74,23 @@ class Version:
                 while last + 1 < len(text) and text[last + 1].isdigit():
                     last += 1
                 self._chunks.append(VersionChunk(int(text[0 : last + 1])))
-                text = text[last + 1:]
+                text = text[last + 1 :]
             elif first_char.isalpha():
                 last = 0
                 while last + 1 < len(text) and text[last + 1].isalpha():
                     last += 1
                 self._chunks.append(VersionChunk(text[0 : last + 1]))
-                text = text[last + 1:]
+                text = text[last + 1 :]
             else:
                 last = 0
-                while last + 1 < len(text) and not text[last + 1].isdigit() and not text[last + 1].isalpha():
+                while (
+                    last + 1 < len(text)
+                    and not text[last + 1].isdigit()
+                    and not text[last + 1].isalpha()
+                ):
                     last += 1
                 # No chunk append here, only care about alnum runs.
-                text = text[last + 1:]
+                text = text[last + 1 :]
 
     def __eq__(self, other):
         if not isinstance(other, Version):
@@ -94,6 +101,7 @@ class Version:
         if not isinstance(other, Version):
             return NotImplemented
         return self._chunks < other._chunks
+
 
 class Package:
     def __init__(self, *, pname: str, version: Version, store_path: StorePath):
@@ -112,6 +120,7 @@ class Package:
 
     def store_path(self) -> StorePath:
         return self._store_path
+
 
 class PackageManifest:
     def __init__(self, packages: List[Package]):
@@ -133,17 +142,18 @@ class PackageManifest:
             check=True,
         ).stdout.rstrip("\n")
 
-        direct_deps: List[str] = \
-            direct_deps_str.split("\n") if direct_deps_str else []
+        direct_deps: List[str] = direct_deps_str.split("\n") if direct_deps_str else []
 
         packages = []
         for dep_path in direct_deps:
             pname, version = parse_pname_version(dep_path)
-            packages.append(Package(
-                pname=pname,
-                version=Version(version),
-                store_path=StorePath(dep_path),
-            ))
+            packages.append(
+                Package(
+                    pname=pname,
+                    version=Version(version),
+                    store_path=StorePath(dep_path),
+                )
+            )
 
         return PackageManifest(packages)
 
@@ -153,11 +163,12 @@ class PackageManifest:
     def all_pnames(self):
         return self._packages_by_pname.keys()
 
+
 class PackageManifestPair:
     def __init__(
-            self,
-            left_manifest: Optional[PackageManifest],
-            right_manifest: Optional[PackageManifest]
+        self,
+        left_manifest: Optional[PackageManifest],
+        right_manifest: Optional[PackageManifest],
     ):
         assert left_manifest is None or isinstance(left_manifest, PackageManifest)
         assert right_manifest is None or isinstance(right_manifest, PackageManifest)
@@ -200,16 +211,21 @@ class PackageManifestPair:
 
         return selection_state_str
 
-    def is_selection_state_changed(self, pname: str) -> str:
-        in_left_manifest = \
-            self._left_manifest is not None and \
-            self._left_manifest.contains_pname(pname)
-        in_right_manifest = \
-            self._right_manifest is not None and \
-            self._right_manifest.contains_pname(pname)
+    def is_selection_state_changed(self, pname: str) -> bool:
+        in_left_manifest = (
+            self._left_manifest is not None
+            and self._left_manifest.contains_pname(pname)
+        )
+        in_right_manifest = (
+            self._right_manifest is not None
+            and self._right_manifest.contains_pname(pname)
+        )
         return in_left_manifest != in_right_manifest
 
+
 NIX_STORE_PATH_REGEX = re.compile(r"^/nix/store/[a-z0-9]+-(.+?)(-([0-9].*?))?(\.drv)?$")
+
+
 def parse_pname_version(path: str) -> Tuple[str, str]:
     base_path = str(StorePath(path).to_base_path().path())
 
@@ -220,6 +236,7 @@ def parse_pname_version(path: str) -> Tuple[str, str]:
     version = match.group(3)
 
     return pname, version
+
 
 def closure_paths_to_map(paths: List[models.StorePath]) -> Dict[str, List[str]]:
     result = {}
@@ -235,4 +252,3 @@ def closure_paths_to_map(paths: List[models.StorePath]) -> Dict[str, List[str]]:
         version_list.sort(key=lambda ver: ver or "")
 
     return result
-

@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class StorePathBase(BaseModel):
     path: str
 
@@ -18,9 +19,9 @@ class StorePathCreate(StorePathBase):
     signatures: list[str] = []
     ca: str | None = None
 
+
 class StorePath(StorePathBase):
     id: int
 
     class Config:
         from_attributes = True
-

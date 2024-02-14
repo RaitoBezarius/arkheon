@@ -1,17 +1,20 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table, UniqueConstraint, func
-from sqlalchemy.orm import backref, relationship, Mapped, mapped_column
-from typing import List
 import datetime
+from typing import List
+
+from sqlalchemy import (Column, DateTime, ForeignKey, Integer, Table,
+                        UniqueConstraint, func)
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .db import Base
-
 
 closures_table = Table(
     "store_paths_closures",
     Base.metadata,
     Column("store_path_id", Integer, ForeignKey("store_paths.id"), primary_key=True),
     Column("deployment_id", Integer, ForeignKey("deployments.id"), primary_key=True),
-    UniqueConstraint('store_path_id', 'deployment_id', name='unique_closure_per_deployment')
+    UniqueConstraint(
+        "store_path_id", "deployment_id", name="unique_closure_per_deployment"
+    ),
 )
 
 references_table = Table(
@@ -19,11 +22,12 @@ references_table = Table(
     Base.metadata,
     Column("referrer_id", Integer, ForeignKey("store_paths.id"), primary_key=True),
     Column("referenced_id", Integer, ForeignKey("store_paths.id"), primary_key=True),
-    UniqueConstraint('referrer_id', 'referenced_id', name='unique_dependencies')
+    UniqueConstraint("referrer_id", "referenced_id", name="unique_dependencies"),
 )
 
+
 class StorePath(Base):
-    __tablename__ = 'store_paths'
+    __tablename__ = "store_paths"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     path: Mapped[str] = mapped_column(unique=True, index=True)
@@ -48,17 +52,24 @@ class StorePath(Base):
         secondary=references_table,
         primaryjoin=id == references_table.c.referenced_id,
         secondaryjoin=id == references_table.c.referrer_id,
-        back_populates="references"
+        back_populates="references",
     )
 
-    associated_deployments: Mapped[List["Deployment"]] = relationship(secondary=closures_table, back_populates="closure")
+    associated_deployments: Mapped[List["Deployment"]] = relationship(
+        secondary=closures_table, back_populates="closure"
+    )
+
 
 class Operator(Base):
     __tablename__ = "operators"
 
     name: Mapped[str] = mapped_column(primary_key=True)
-    created_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    last_seen: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    last_seen: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     deployments: Mapped[List["Deployment"]] = relationship(back_populates="operator")
 
@@ -71,8 +82,14 @@ class Deployment(Base):
     operator: Mapped[Operator] = relationship(back_populates="deployments")
     target_machine_id: Mapped[int] = mapped_column(ForeignKey("machines.id"))
     target_machine: Mapped["Machine"] = relationship(back_populates="deployments")
-    created_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    closure: Mapped[List[StorePath]] = relationship(secondary=closures_table, back_populates='associated_deployments', cascade='merge')
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    closure: Mapped[List[StorePath]] = relationship(
+        secondary=closures_table,
+        back_populates="associated_deployments",
+        cascade="merge",
+    )
 
 
 class Machine(Base):
