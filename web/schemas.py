@@ -23,3 +23,4 @@ class StorePath(StorePathBase):
 
     class Config:
         from_attributes = True
+
