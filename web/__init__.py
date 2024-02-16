@@ -1,7 +1,5 @@
-from os import environ as env
-
 from fastapi import Depends, FastAPI, HTTPException
-from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from . import crud, models, schemas
@@ -11,6 +9,19 @@ from .package import closure_paths_to_map
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:5173",
+    "http://localhost:8000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 def get_db():
@@ -29,8 +40,9 @@ def get_or_404(session, model, pk):
     return o
 
 
-if env.get("MIMIR_ENV") != "production":
-    app.mount("/", StaticFiles(directory="frontend"), name="frontend")
+@app.get("/machines")
+def get_machines(db: Session = Depends(get_db)):
+    return db.query(models.Machine).all()
 
 
 @app.post("/record/{machine_identifier}")

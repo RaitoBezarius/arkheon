@@ -15,6 +15,7 @@
         ]
       ))
       pkgs.jq
+      pkgs.nodejs
     ];
   };
 }
