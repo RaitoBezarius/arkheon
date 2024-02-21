@@ -90,3 +90,6 @@ def record_deployment(
         return create_closure(db, machine, closure)
     else:
         return enroll_machine(db, machine_identifier, closure)
+
+def get_all_deployments(db: Session, machine_identifier: str) -> list[models.Deployment]:
+    return list(db.query(models.Deployment).join(models.Machine).filter_by(identifier=machine_identifier))

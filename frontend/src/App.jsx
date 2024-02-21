@@ -9,9 +9,7 @@ function App() {
   const [machines, setMachines] = createSignal([]);
 
   createEffect(() => {
-    fetchMachines().then(machines => {
-      setMachines(machines);
-    });
+    fetchMachines().then(setMachines);
   })
 
   return (

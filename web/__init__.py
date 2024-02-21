@@ -56,6 +56,13 @@ def record_deployment(
         "message": f"{deployment.id} recorded for machine {deployment.target_machine}"
     }
 
+@app.get("/deployments/{machine_identifier}")
+def get_deployments(
+    machine_identifier: str,
+    db: Session = Depends(get_db)
+):
+    deployments = crud.get_all_deployments(db, machine_identifier)
+    return deployments
 
 @app.get("/compare/{machine_identifier}")
 def compare_deployments(
