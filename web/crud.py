@@ -5,7 +5,10 @@ from . import models, schemas
 
 
 def create_closure(
-    db: Session, target: models.Machine, store_paths: list[schemas.StorePathCreate]
+    db: Session,
+    target: models.Machine,
+    store_paths: list[schemas.StorePathCreate],
+    toplevel: str,
 ) -> models.Deployment:
     spaths = {}
     for spath in store_paths:
@@ -58,38 +61,48 @@ def create_closure(
                 .on_conflict_do_nothing()
             )
 
+    # TODO: allow different operators
     op = db.query(models.Operator).filter_by(name="Raito").one_or_none()
+
     if op is None:
         op = models.Operator(name="Raito")
+
     d = models.Deployment(
-        operator=op, closure=list(closure.values()), target_machine=target
+        operator=op,
+        closure=list(closure.values()),
+        target_machine=target,
+        toplevel=toplevel,
     )
+
     db.add(d)
     db.commit()
 
     return d
 
 
-def enroll_machine(
-    db: Session, identifier: str, initial_closure: list[schemas.StorePathCreate]
-) -> models.Deployment:
-    m = models.Machine(identifier=identifier)
-    db.add(m)
-
-    return create_closure(db, m, initial_closure)
-
-
 def record_deployment(
-    db: Session, machine_identifier: str, closure: list[schemas.StorePathCreate]
+    db: Session,
+    machine_identifier: str,
+    closure: list[schemas.StorePathCreate],
+    toplevel: str,
 ) -> models.Deployment:
     machine = (
         db.query(models.Machine).filter_by(identifier=machine_identifier).one_or_none()
     )
 
-    if machine:
-        return create_closure(db, machine, closure)
-    else:
-        return enroll_machine(db, machine_identifier, closure)
+    if machine is None:
+        machine = models.Machine(identifier=machine_identifier)
+        db.add(machine)
 
-def get_all_deployments(db: Session, machine_identifier: str) -> list[models.Deployment]:
-    return list(db.query(models.Deployment).join(models.Machine).filter_by(identifier=machine_identifier))
+    return create_closure(db, machine, closure, toplevel)
+
+
+def get_all_deployments(
+    db: Session, machine_identifier: str
+) -> list[models.Deployment]:
+    return list(
+        db.query(models.Deployment)
+        .join(models.Machine)
+        .filter_by(identifier=machine_identifier)
+        .order_by(models.Deployment.id.desc())
+    )

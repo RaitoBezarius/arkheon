@@ -90,6 +90,7 @@ class Deployment(Base):
         back_populates="associated_deployments",
         cascade="merge",
     )
+    toplevel: Mapped[str] = mapped_column(unique=True, index=True)
 
 
 class Machine(Base):

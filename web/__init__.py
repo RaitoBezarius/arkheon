@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
@@ -49,12 +49,19 @@ def get_machines(db: Session = Depends(get_db)):
 def record_deployment(
     machine_identifier: str,
     closure: list[schemas.StorePathCreate],
+    toplevel: str,
+    response: Response,
     db: Session = Depends(get_db),
 ):
-    deployment = crud.record_deployment(db, machine_identifier, closure)
+    if db.query(models.Deployment).filter_by(toplevel=toplevel).count():
+        response.status_code = status.HTTP_409_CONFLICT
+        return {"message": "This system has already been recorded."}
+
+    deployment = crud.record_deployment(db, machine_identifier, closure, toplevel)
     return {
         "message": f"{deployment.id} recorded for machine {deployment.target_machine}"
     }
+
 
 @app.get("/deployments/{machine_identifier}")
 def get_deployments(
