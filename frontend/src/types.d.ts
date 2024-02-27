@@ -16,12 +16,14 @@ interface RawDiff {
   added: { [index: string]: Versions };
   removed: { [index: string]: Versions };
   changed: { [index: string]: { old: Versions; new: Versions } };
+  sizes: { old: number; new: number };
 }
 
 interface Diff {
   added: Map<string, Versions>;
   removed: Map<string, Versions>;
   changed: Map<string, { old: Versions; new: Versions }>;
+  sizes: { old: number; new: number };
 }
 
 interface Package {

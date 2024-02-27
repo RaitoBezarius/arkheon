@@ -16,7 +16,7 @@ export const PackageDiff: Component<PackageDiff> = (props) => {
   const _new = sortVersions(props.new);
 
   return (
-    <div class="field is-grouped is-grouped-multiline mb-2">
+    <div class="field is-grouped is-grouped-multiline">
       <div class="control">
         <span class="is-family-monospace is-size-7">
           <b>{props.name}&nbsp;:</b>
@@ -25,7 +25,7 @@ export const PackageDiff: Component<PackageDiff> = (props) => {
 
       <For each={_old}>
         {([value, count]) => (
-          <div class="control ">
+          <div class="control">
             <span class="tags has-addons">
               <span class="tag is-danger is-light">{value}</span>
               <Show when={count > 1}>
@@ -42,7 +42,7 @@ export const PackageDiff: Component<PackageDiff> = (props) => {
 
       <For each={_new}>
         {([value, count]) => (
-          <div class="control ">
+          <div class="control">
             <span class="tags has-addons">
               <span class="tag is-success is-light">{value}</span>
               <Show when={count > 1}>

@@ -4,11 +4,16 @@ import { get } from "../utils";
 import { Package } from "../models/Package";
 import { PackageDiff } from "../models/PackageDiff";
 
+const size = (bytes: number): string => {
+  return (bytes / 1073741824).toPrecision(4);
+};
+
 export default function Diff() {
   const [diff, setDiff] = createSignal<Diff>({
     added: new Map(),
     removed: new Map(),
     changed: new Map(),
+    sizes: { old: 0, new: 0 },
   });
 
   const params = useParams();
@@ -19,12 +24,25 @@ export default function Diff() {
         added: new Map(Object.entries(d.added)),
         removed: new Map(Object.entries(d.removed)),
         changed: new Map(Object.entries(d.changed)),
+        sizes: d.sizes,
       });
     });
   });
 
   return (
     <div>
+      <div class="block">
+        <div class="field is-horizontal">
+          <label class="label m-0">New closure size :</label>
+          <span class="ml-2"> {size(diff().sizes.new)} GiB</span>
+        </div>
+
+        <div class="field is-horizontal">
+          <label class="label m-0">Old closure size :</label>
+          <span class="ml-2"> {size(diff().sizes.old)} GiB</span>
+        </div>
+      </div>
+
       <Show when={diff().added.size > 0}>
         <section class="hero is-success block">
           <div class="hero-body py-5">

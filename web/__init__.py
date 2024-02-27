@@ -8,6 +8,7 @@ from .package import closure_paths_to_map
 
 D = models.Deployment
 M = models.Machine
+S = models.StorePath
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -73,14 +74,21 @@ def get_deployments(machine_identifier: str, db: Session = Depends(get_db)):
 
 @app.get("/diff-latest")
 def compare_with_previous(deployment_id: int, db: Session = Depends(get_db)):
+    def size_from_path(path: str):
+        return db.query(S).where(S.path == path).one().closure_size
+
     current = get_or_404(db, D, deployment_id)
-    previous = db.query(D).where(D.id < deployment_id).first()
+    previous = db.query(D).where(D.id < deployment_id).order_by(D.id.desc()).first()
 
     current_pkgs = closure_paths_to_map(current.closure)
+    current_size = size_from_path(current.toplevel)
 
-    previous_pkgs = (
-        dict() if previous is None else closure_paths_to_map(previous.closure)
-    )
+    if previous is None:
+        previous_pkgs = dict()
+        previous_size = 0
+    else:
+        previous_pkgs = closure_paths_to_map(previous.closure)
+        previous_size = size_from_path(previous.toplevel)
 
     current_pnames = set(current_pkgs.keys())
     previous_pnames = set(previous_pkgs.keys())
@@ -101,6 +109,7 @@ def compare_with_previous(deployment_id: int, db: Session = Depends(get_db)):
         },
         "removed": {p: previous_pkgs[p] for p in removed},
         "added": {p: current_pkgs[p] for p in added},
+        "sizes": {"old": previous_size, "new": current_size},
     }
 
 
