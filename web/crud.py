@@ -9,6 +9,7 @@ def create_closure(
     target: models.Machine,
     store_paths: list[schemas.StorePathCreate],
     toplevel: str,
+    operator: str,
 ) -> models.Deployment:
     spaths = {}
     for spath in store_paths:
@@ -61,11 +62,10 @@ def create_closure(
                 .on_conflict_do_nothing()
             )
 
-    # TODO: allow different operators
-    op = db.query(models.Operator).filter_by(name="Raito").one_or_none()
+    op = db.query(models.Operator).filter_by(name=operator).one_or_none()
 
     if op is None:
-        op = models.Operator(name="Raito")
+        op = models.Operator(name=operator)
 
     d = models.Deployment(
         operator=op,
@@ -85,6 +85,7 @@ def record_deployment(
     machine_identifier: str,
     closure: list[schemas.StorePathCreate],
     toplevel: str,
+    operator: str,
 ) -> models.Deployment:
     machine = (
         db.query(models.Machine).filter_by(identifier=machine_identifier).one_or_none()
@@ -94,7 +95,7 @@ def record_deployment(
         machine = models.Machine(identifier=machine_identifier)
         db.add(machine)
 
-    return create_closure(db, machine, closure, toplevel)
+    return create_closure(db, machine, closure, toplevel, operator)
 
 
 def get_all_deployments(

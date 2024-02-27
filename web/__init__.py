@@ -100,13 +100,16 @@ def record_deployment(
     closure: list[schemas.StorePathCreate],
     toplevel: str,
     response: Response,
+    operator: str = "default",
     db: Session = Depends(get_db),
 ):
     if db.query(D).filter_by(toplevel=toplevel).count():
         response.status_code = status.HTTP_409_CONFLICT
         return {"message": "This system has already been recorded."}
 
-    deployment = crud.record_deployment(db, machine_identifier, closure, toplevel)
+    deployment = crud.record_deployment(
+        db, machine_identifier, closure, toplevel, operator
+    )
     return {
         "message": f"{deployment.id} recorded for machine {deployment.target_machine}"
     }
