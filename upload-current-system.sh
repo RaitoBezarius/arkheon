@@ -5,4 +5,4 @@ nix path-info \
 	-rsh /run/current-system \
 	--json | curl -X POST \
 	-H "Content-Type: application/json" \
-	--data @- "http://localhost:8000/record/$(hostname)?toplevel=$(nix path-info /run/current-system)"
+	--data @- "http://localhost:8000/record/$(hostname)?toplevel=$(nix path-info /run/current-system)&operator=$(printenv 'MIMIR_OPERATOR')"
