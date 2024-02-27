@@ -1,6 +1,6 @@
 import { For, createEffect, createSignal } from "solid-js";
 import { Collapse } from "solid-collapse";
-import { Deployment } from "./Deployment";
+import { Deployment } from "./Deployment.tsx";
 
 const fetchDeployments = async (identifier) =>
   (await fetch(`http://127.0.0.1:8000/deployments/${identifier}`)).json();
@@ -25,7 +25,7 @@ export function Machine(props) {
         <Collapse value={isExpanded()}>
           <ul>
             <For each={deployments()}>
-              {(deployment) => (
+              {(deployment: object) => (
                 <li>
                   <Deployment {...deployment} />
                 </li>

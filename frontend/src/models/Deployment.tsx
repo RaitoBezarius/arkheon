@@ -10,7 +10,9 @@ export function Deployment(props) {
         {date(new Date(props.created_at))}
       </span>
 
-      <a class="tag is-family-monospace">{props.toplevel}</a>
+      <a class="tag is-family-monospace" href={`/diff/${props.id}`}>
+        {props.toplevel}
+      </a>
 
       <span class="tag is-link">
         by&nbsp;<b>{props.operator_id}</b>
