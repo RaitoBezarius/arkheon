@@ -238,17 +238,20 @@ def parse_pname_version(path: str) -> Tuple[str, str]:
     return pname, version
 
 
-def closure_paths_to_map(paths: List[models.StorePath]) -> Dict[str, List[str]]:
+def closure_paths_to_map(
+    paths: List[models.StorePath],
+) -> Dict[str, Tuple[List[str], int]]:
     result = {}
 
     for spath in paths:
         name, version = parse_pname_version(spath.path)
         if name not in result:
-            result[name] = [version]
+            result[name] = [[version], spath.nar_size]
         else:
-            result[name].append(version)
+            result[name][0].append(version)
+            result[name][1] += spath.nar_size
 
-    for version_list in result.values():
+    for version_list, _ in result.values():
         version_list.sort(key=lambda ver: ver or "")
 
     return result

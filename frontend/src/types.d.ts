@@ -10,7 +10,7 @@ interface Machine {
   identifier: string;
 }
 
-type Versions = Array<string?>;
+type Versions = [Array<string?>, number];
 
 interface RawDiff {
   added: { [index: string]: Versions };

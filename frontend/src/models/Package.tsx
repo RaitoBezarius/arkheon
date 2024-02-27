@@ -1,18 +1,21 @@
 import { Component, For, Show } from "solid-js";
+import { size, sortVersions } from "../utils";
 
-const sortVersions = (versions: Versions) => {
-  const bag: Map<string, number> = new Map();
-  for (const _v of versions) {
-    const v = _v === null ? "none" : _v;
-    const c = bag.get(v);
-    bag.set(v, c === undefined ? 1 : c + 1);
-  }
-
-  return Array.from(bag.entries());
+const Size = (bytes: number) => {
+  const [value, unit] = size(bytes);
+  return (
+    <div style="margin-left: auto">
+      <span class="tags has-addons">
+        <b class="tag">{value}</b>
+        <span class="tag is-dark">{unit}</span>
+      </span>
+    </div>
+  );
 };
 
 export const Package: Component<Package> = (props) => {
-  const versions = sortVersions(props.versions);
+  const [v, bytes] = props.versions;
+  const versions = sortVersions(v);
 
   return (
     <div class="field is-grouped mb-2">
@@ -34,6 +37,7 @@ export const Package: Component<Package> = (props) => {
           </div>
         )}
       </For>
+      {Size(bytes)}
     </div>
   );
 };
