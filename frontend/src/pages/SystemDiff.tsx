@@ -1,6 +1,6 @@
 import { For, Show, createEffect, createSignal } from "solid-js";
 import { useParams } from "@solidjs/router";
-import { get } from "../utils";
+import { date, get } from "../utils";
 import { Package } from "../models/Package";
 import { PackageDiff } from "../models/PackageDiff";
 
@@ -25,22 +25,46 @@ export default function Diff() {
         removed: new Map(Object.entries(d.removed)),
         changed: new Map(Object.entries(d.changed)),
         sizes: d.sizes,
+        deployments: d.deployments,
       });
     });
   });
 
   return (
-    <div>
+    <>
       <div class="block">
         <div class="field is-horizontal">
           <label class="label m-0">New closure size :</label>
-          <span class="ml-2"> {size(diff().sizes.new)} GiB</span>
+          <span class="tags has-addons ml-2">
+            <b class="tag">{size(diff().sizes.new)}</b>
+            <span class="tag is-dark">GiB</span>
+          </span>
         </div>
 
         <div class="field is-horizontal">
           <label class="label m-0">Old closure size :</label>
-          <span class="ml-2"> {size(diff().sizes.old)} GiB</span>
+          <span class="tags has-addons ml-2">
+            <b class="tag">{size(diff().sizes.old)}</b>
+            <span class="tag is-dark">GiB</span>
+          </span>
         </div>
+
+        <Show when={diff().deployments}>
+          {(d) => (
+            <div class="field is-horizontal">
+              <label class="label m-0">Applied on :</label>
+              <div class="tags has-addons ml-2">
+                <span class="tag is-family-monospace">
+                  {date(d().new.created_at)}
+                </span>
+
+                <span class="tag is-dark">
+                  by&nbsp;<b>{d().new.operator_id}</b>
+                </span>
+              </div>
+            </div>
+          )}
+        </Show>
       </div>
 
       <Show when={diff().added.size > 0}>
@@ -79,6 +103,6 @@ export default function Diff() {
           </div>
         </section>
       </Show>
-    </div>
+    </>
   );
 }

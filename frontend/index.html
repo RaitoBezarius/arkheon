@@ -7,6 +7,14 @@
     <title>Mimir</title>
     <!-- Local Bulma CSS -->
     <link rel="stylesheet" href="/css/bulma.min.css" />
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+    </style>
 </head>
 
 <body>
@@ -27,6 +35,11 @@
     <section class="section">
         <div class="container" id="app"></div>
     </section>
+
+    <footer class="footer has-text-centered">
+        Source available on
+        <a href="https://github.com/RaitoBezarius/mimir">GitHub</a>
+    </footer>
 
     <!-- Include the bundled JavaScript file -->
     <script type="module" src="/src/index.tsx"></script>

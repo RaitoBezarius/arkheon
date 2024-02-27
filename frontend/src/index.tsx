@@ -3,9 +3,9 @@ import { lazy } from "solid-js";
 import { render } from "solid-js/web";
 import { Router, Route } from "@solidjs/router";
 
-const Home = lazy(() => import("./pages/Home.jsx"));
-const Diff = lazy(() => import("./pages/SystemDiff.jsx"));
-const NotFound = lazy(() => import("./pages/404.jsx"));
+const Home = lazy(() => import("./pages/Home"));
+const Diff = lazy(() => import("./pages/SystemDiff"));
+const NotFound = lazy(() => import("./pages/404"));
 
 render(
   () => (

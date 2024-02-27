@@ -1,15 +1,11 @@
 import { Component } from "solid-js";
-
-const date = new Intl.DateTimeFormat("en-GB", {
-  timeStyle: "medium",
-  dateStyle: "short",
-}).format;
+import { date } from "../utils";
 
 export const Deployment: Component<Deployment> = (props) => {
   return (
     <div class="tags has-addons mt-1">
       <span class="tag is-dark is-family-monospace">
-        {date(new Date(props.created_at))}
+        {date(props.created_at)}
       </span>
 
       <a class="tag is-family-monospace" href={`/diff/${props.id}`}>

@@ -86,6 +86,7 @@ def get_diff(current: D, previous: Optional[D], db: Session):
         "removed": {p: previous_pkgs[p] for p in removed},
         "added": {p: current_pkgs[p] for p in added},
         "sizes": {"old": previous_size, "new": current_size},
+        "deployments": {"old": previous, "new": current},
     }
 
 
