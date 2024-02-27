@@ -1,9 +1,11 @@
+import { Component } from "solid-js";
+
 const date = new Intl.DateTimeFormat("en-GB", {
   timeStyle: "medium",
   dateStyle: "short",
 }).format;
 
-export function Deployment(props: Deployment) {
+export const Deployment: Component<Deployment> = (props) => {
   return (
     <div class="tags has-addons mt-1">
       <span class="tag is-dark is-family-monospace">
@@ -19,4 +21,4 @@ export function Deployment(props: Deployment) {
       </span>
     </div>
   );
-}
+};

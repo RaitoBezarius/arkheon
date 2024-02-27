@@ -13,7 +13,7 @@ export default function Home() {
     <>
       <div>
         <For each={machines()}>
-          {(machine: { identifier: string }) => <Machine {...machine} />}
+          {(machine: Machine) => <Machine {...machine} />}
         </For>
       </div>
     </>

@@ -3,8 +3,8 @@ import { Collapse } from "solid-collapse";
 import { Deployment } from "./Deployment.tsx";
 import { get } from "../utils";
 
-export const Machine: Component<{ identifier: string }> = (props: Machine) => {
-  const [isExpanded, setIsExpanded] = createSignal(true);
+export const Machine: Component<Machine> = (props) => {
+  const [isExpanded, _] = createSignal(true);
   const [deployments, setDeployments] = createSignal([]);
 
   createEffect(() => {

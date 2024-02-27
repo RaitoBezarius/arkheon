@@ -71,10 +71,10 @@ def get_deployments(machine_identifier: str, db: Session = Depends(get_db)):
     return crud.get_all_deployments(db, machine_identifier)
 
 
-@app.get("/diff-latest/{machine_identifier}")
+@app.get("/diff-latest")
 def compare_with_previous(deployment_id: int, db: Session = Depends(get_db)):
     current = get_or_404(db, D, deployment_id)
-    previous = db.query(D).where(D.id < deployment_id).one_or_none()
+    previous = db.query(D).where(D.id < deployment_id).first()
 
     current_pkgs = closure_paths_to_map(current.closure)
 
