@@ -1,22 +1,20 @@
-import { For, createEffect, createSignal } from "solid-js";
+import { Component, For, createEffect, createSignal, Show } from "solid-js";
 import { Collapse } from "solid-collapse";
 import { Deployment } from "./Deployment.tsx";
+import { get } from "../utils";
 
-const fetchDeployments = async (identifier) =>
-  (await fetch(`http://127.0.0.1:8000/deployments/${identifier}`)).json();
-
-export function Machine(props) {
+export const Machine: Component<{ identifier: string }> = (props: Machine) => {
   const [isExpanded, setIsExpanded] = createSignal(true);
   const [deployments, setDeployments] = createSignal([]);
 
   createEffect(() => {
-    fetchDeployments(props.machine.identifier).then(setDeployments);
+    get(`deployments/${props.identifier}`).then(setDeployments);
   });
 
   return (
     <div class="box">
       <h3 class="mb-3">
-        <b>{props.machine.identifier}</b>
+        <b>{props.identifier}</b>
       </h3>
       <Show
         when={deployments().length > 0}
@@ -25,7 +23,7 @@ export function Machine(props) {
         <Collapse value={isExpanded()}>
           <ul>
             <For each={deployments()}>
-              {(deployment: object) => (
+              {(deployment: Deployment) => (
                 <li>
                   <Deployment {...deployment} />
                 </li>
@@ -36,4 +34,4 @@ export function Machine(props) {
       </Show>
     </div>
   );
-}
+};

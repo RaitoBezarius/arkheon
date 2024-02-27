@@ -3,7 +3,7 @@ const date = new Intl.DateTimeFormat("en-GB", {
   dateStyle: "short",
 }).format;
 
-export function Deployment(props) {
+export function Deployment(props: Deployment) {
   return (
     <div class="tags has-addons mt-1">
       <span class="tag is-dark is-family-monospace">
