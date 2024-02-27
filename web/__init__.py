@@ -103,7 +103,14 @@ def record_deployment(
     operator: str = "default",
     db: Session = Depends(get_db),
 ):
-    if db.query(D).filter_by(toplevel=toplevel).count():
+    last_deployment = (
+        db.query(D)
+        .where(D.target_machine.has(M.identifier == machine_identifier))
+        .order_by(D.id.desc())
+        .first()
+    )
+
+    if last_deployment is not None and last_deployment.toplevel == toplevel:
         response.status_code = status.HTTP_409_CONFLICT
         return {"message": "This system has already been recorded."}
 
