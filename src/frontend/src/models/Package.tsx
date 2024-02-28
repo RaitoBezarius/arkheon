@@ -9,6 +9,8 @@ export const Package: Component<Package> = (props) => {
 
   return (
     <div class="field is-grouped pkg">
+      {Size(bytes)}
+
       <div class="control">
         <span class="is-family-monospace is-size-7">
           <b>{props.name}&nbsp;:</b>
@@ -16,8 +18,6 @@ export const Package: Component<Package> = (props) => {
       </div>
 
       <For each={versions}>{Version}</For>
-
-      {Size(bytes)}
     </div>
   );
 };

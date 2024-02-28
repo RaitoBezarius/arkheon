@@ -11,6 +11,8 @@ export const PackageDiff: Component<PackageDiff> = (props) => {
 
   return (
     <div class="field is-grouped pkg">
+      {Size(bn - bo, true)}
+
       <div class="control">
         <span class="is-family-monospace is-size-7">
           <b>{props.name}&nbsp;:</b>
@@ -24,8 +26,6 @@ export const PackageDiff: Component<PackageDiff> = (props) => {
       </div>
 
       <For each={_new}>{Version}</For>
-
-      {Size(bn - bo, true)}
     </div>
   );
 };
