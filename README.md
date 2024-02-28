@@ -2,6 +2,8 @@
 
 Arkheon is a very simple FastAPI-based web application to record memories of your NixOS deployments.
 
+![Arkheon preview](./Arkheon.png)
+
 ## API documentation
 
 ### Records a deployment
@@ -17,7 +19,6 @@ This will record a deployment at this point in time for that `<identifier>` mach
 
 ### Short term
 
-- Comparison endpoint should return: added packages, removed packages, changed packages by version, changed packages by state selection and contains information about the closure size evolution and each package size evolution.
 - API to register webhooks to call upon deployments: regex on machine identifier?
 - Webhook push on each record
 - Production packaging
