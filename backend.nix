@@ -7,13 +7,26 @@
 , uvicorn
 , sqlalchemy
 }:
-
+let
+  removeFilesets = lib.foldl lib.fileset.difference;
+in
 buildPythonPackage rec {
   pname = "arkheon";
   version = "unstable-2024-02-27";
   pyproject = true;
 
-  src = ./.;
+  src = with lib.fileset; toSource {
+    root = ./.;
+    fileset = removeFilesets
+      (intersection
+        (gitTracked ./.)
+        (fileFilter (file: ! file.hasExt "nix") ./.)
+      )
+      [
+        ./src/frontend
+        ./tests
+      ];
+  };
 
   nativeBuildInputs = [
     hatchling
@@ -24,6 +37,12 @@ buildPythonPackage rec {
     pydantic
     sqlalchemy
   ];
+
+  postPatch = ''
+    substituteInPlace src/api/db.py --replace-fail 'connect_args={"check_same_thread": False}' ""
+  '';
+
+  passthru.frontend = callPackage ./frontend.nix {};
 
   meta = with lib; {
     description = "Track your Nix closures over time";
