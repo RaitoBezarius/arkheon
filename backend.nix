@@ -6,6 +6,7 @@
 , fastapi
 , uvicorn
 , sqlalchemy
+, callPackage
 }:
 let
   removeFilesets = lib.foldl lib.fileset.difference;
