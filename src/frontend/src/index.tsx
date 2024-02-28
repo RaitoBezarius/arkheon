@@ -2,6 +2,7 @@
 import { lazy } from "solid-js";
 import { render } from "solid-js/web";
 import { Router, Route } from "@solidjs/router";
+import "./sass/bulma.sass"
 
 const Home = lazy(() => import("./pages/Home"));
 const Diff = lazy(() => import("./pages/SystemDiff"));
