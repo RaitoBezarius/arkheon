@@ -1,17 +1,6 @@
 import { Component, For, Show } from "solid-js";
-import { size, sortVersions } from "../utils";
-
-const Size = (bytes: number) => {
-  const [value, unit] = size(Math.abs(bytes));
-  return (
-    <div style="margin-left: auto">
-      <span class="tags has-addons">
-        <b class="tag">{bytes < 0 ? "-" : "+"} {value}</b>
-        <span class="tag is-dark">{unit}</span>
-      </span>
-    </div>
-  );
-};
+import { sortVersions } from "../utils";
+import { Size } from "../components/Size";
 
 export const PackageDiff: Component<PackageDiff> = (props) => {
   const [vo, bo] = props.old;
@@ -20,7 +9,7 @@ export const PackageDiff: Component<PackageDiff> = (props) => {
   const _new = sortVersions(vn);
 
   return (
-    <div class="field is-grouped is-grouped-multiline">
+    <div class="field is-grouped pkg">
       <div class="control">
         <span class="is-family-monospace is-size-7">
           <b>{props.name}&nbsp;:</b>
@@ -57,7 +46,7 @@ export const PackageDiff: Component<PackageDiff> = (props) => {
         )}
       </For>
 
-      {Size(bn - bo)}
+      {Size(bn - bo, true)}
     </div>
   );
 };

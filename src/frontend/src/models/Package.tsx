@@ -1,17 +1,6 @@
 import { Component, For, Show } from "solid-js";
-import { size, sortVersions } from "../utils";
-
-const Size = (bytes: number) => {
-  const [value, unit] = size(bytes);
-  return (
-    <div style="margin-left: auto">
-      <span class="tags has-addons">
-        <b class="tag">{value}</b>
-        <span class="tag is-dark">{unit}</span>
-      </span>
-    </div>
-  );
-};
+import { sortVersions } from "../utils";
+import { Size } from "../components/Size";
 
 export const Package: Component<Package> = (props) => {
   const [v, bytes] = props.versions;
