@@ -4,6 +4,8 @@
 }:
 
 {
+  nixosModules.arkheon = import ./nix/module.nix;
+
   frontend = pkgs.buildNpmPackage {
     pname = "arkheon-web";
     version = "unstable-2024";
