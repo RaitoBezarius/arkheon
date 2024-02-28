@@ -2,6 +2,10 @@
 mimir.db
 __pycache__
 
+# nix
+result
+result-*
+
 # Logs
 logs
 *.log

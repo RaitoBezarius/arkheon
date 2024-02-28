@@ -22,6 +22,8 @@
     '';
   };
 
+  backend = pkgs.python3.pkgs.callPackage ./backend.nix {};
+
   shell = pkgs.mkShell {
     buildInputs = [
       (pkgs.python3.withPackages (
