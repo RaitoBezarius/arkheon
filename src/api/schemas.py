@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 
@@ -22,6 +24,17 @@ class StorePathCreate(StorePathBase):
 
 class StorePath(StorePathBase):
     id: int
+
+    class Config:
+        from_attributes = True
+
+
+class DeploymentDTO(BaseModel):
+    id: int
+    operator_id: str
+    target_machine_id: int
+    created_at: datetime
+    toplevel: str
 
     class Config:
         from_attributes = True

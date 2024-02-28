@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from . import crud, models, schemas
 from .db import SessionLocal, engine
 from .package import closure_paths_to_map
+from .schemas import DeploymentDTO
 
 D = models.Deployment
 M = models.Machine
@@ -60,12 +61,16 @@ def get_diff(current: D, previous: Optional[D], db: Session):
     current_pkgs = closure_paths_to_map(current.closure)
     current_size = size_from_path(current.toplevel, db)
 
+    current_d = DeploymentDTO.model_validate(current)
+
     if previous is None:
         previous_pkgs = dict()
         previous_size = 0
+        previous_d = None
     else:
         previous_pkgs = closure_paths_to_map(previous.closure)
         previous_size = size_from_path(previous.toplevel, db)
+        previous_d = DeploymentDTO.model_validate(previous)
 
     current_pnames = set(current_pkgs.keys())
     previous_pnames = set(previous_pkgs.keys())
@@ -87,7 +92,7 @@ def get_diff(current: D, previous: Optional[D], db: Session):
         "removed": {p: previous_pkgs[p] for p in removed},
         "added": {p: current_pkgs[p] for p in added},
         "sizes": {"old": previous_size, "new": current_size},
-        "deployments": {"old": previous, "new": current},
+        "deployments": {"old": previous_d, "new": current_d},
     }
 
 
