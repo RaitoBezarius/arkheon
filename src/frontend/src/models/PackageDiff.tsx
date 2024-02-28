@@ -1,6 +1,7 @@
-import { Component, For, Show } from "solid-js";
+import { Component, For } from "solid-js";
 import { sortVersions } from "../utils";
 import { Size } from "../components/Size";
+import { Version } from "../components/Version";
 
 export const PackageDiff: Component<PackageDiff> = (props) => {
   const [vo, bo] = props.old;
@@ -16,35 +17,13 @@ export const PackageDiff: Component<PackageDiff> = (props) => {
         </span>
       </div>
 
-      <For each={_old}>
-        {([value, count]) => (
-          <div class="control">
-            <span class="tags has-addons">
-              <span class="tag is-danger is-light">{value}</span>
-              <Show when={count > 1}>
-                <span class="tag is-link is-light">&times;&nbsp;{count}</span>
-              </Show>
-            </span>
-          </div>
-        )}
-      </For>
+      <For each={_old}>{Version}</For>
 
       <div class="control">
         <b class="is-size-7">to</b>
       </div>
 
-      <For each={_new}>
-        {([value, count]) => (
-          <div class="control">
-            <span class="tags has-addons">
-              <span class="tag is-success is-light">{value}</span>
-              <Show when={count > 1}>
-                <span class="tag is-link is-light">&times;&nbsp;{count}</span>
-              </Show>
-            </span>
-          </div>
-        )}
-      </For>
+      <For each={_new}>{Version}</For>
 
       {Size(bn - bo, true)}
     </div>
