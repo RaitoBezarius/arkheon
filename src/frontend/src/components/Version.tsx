@@ -5,7 +5,7 @@ export const Version = ([value, count]: [string, number]) => (
     <span class="tags has-addons">
       <span class="tag">{value}</span>
       <Show when={count > 1}>
-        <span class="tag is-link is-light">&times;&nbsp;{count}</span>
+        <span class="tag is-white">&times;&nbsp;{count}</span>
       </Show>
     </span>
   </div>

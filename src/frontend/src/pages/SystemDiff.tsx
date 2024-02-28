@@ -1,18 +1,9 @@
 import { For, Show, createEffect, createSignal } from "solid-js";
 import { useParams } from "@solidjs/router";
-import { date, get, size } from "../utils";
+import { date, get } from "../utils";
 import { Package } from "../models/Package";
 import { PackageDiff } from "../models/PackageDiff";
-
-const ClosureSize = (bytes: number) => {
-  const [value, unit] = size(bytes);
-  return (
-    <span class="tags has-addons ml-2">
-      <b class="tag">{value}</b>
-      <span class="tag is-dark">{unit}</span>
-    </span>
-  );
-};
+import { Size } from "../components/Size";
 
 export default function Diff() {
   const [diff, setDiff] = createSignal<Diff>({
@@ -40,13 +31,13 @@ export default function Diff() {
     <>
       <div class="block">
         <div class="field is-horizontal">
-          <label class="label m-0">New closure size :</label>
-          {ClosureSize(diff().sizes.new)}
+          <label class="label my-0 mr-3">New closure size :</label>
+          {Size(diff().sizes.new)}
         </div>
 
         <div class="field is-horizontal">
-          <label class="label m-0">Old closure size :</label>
-          {ClosureSize(diff().sizes.old)}
+          <label class="label my-0 mr-3">Old closure size :</label>
+          {Size(diff().sizes.old)}
         </div>
 
         <Show when={diff().deployments}>

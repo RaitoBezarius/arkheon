@@ -10,7 +10,7 @@ export const Size = (bytes: number, signed: boolean = false) => {
           <Show when={signed}>{bytes < 0 ? "- " : "+ "}</Show>
           {value}
         </b>
-        <span class="tag is-dark u-tag">{unit}</span>
+        <span class="tag is-white u-tag">{unit}</span>
       </span>
     </div>
   );
