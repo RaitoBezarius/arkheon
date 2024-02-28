@@ -1,6 +1,7 @@
 {
   sources ? import ./npins,
   pkgs ? import sources.nixpkgs { },
+  nix-filter ? import sources.nix-filter,
 }:
 
 {
@@ -8,7 +9,11 @@
     pname = "arkheon-web";
     version = "unstable-2024";
 
-    src = ./frontend;
+    src = nix-filter {
+      root = ./src/frontend;
+
+      exclude = [ "node_modules" ];
+    };
 
     npmDepsHash = "sha256-pTzP0bx++/jglyYBDBirzUsK/2rTTMbagMUwU0eIdm0=";
 
