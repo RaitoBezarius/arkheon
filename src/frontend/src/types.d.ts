@@ -21,9 +21,6 @@ interface RawDiff {
 }
 
 interface Diff {
-  added: Map<string, Versions>;
-  removed: Map<string, Versions>;
-  changed: Map<string, { old: Versions; new: Versions }>;
   sizes: { old: number; new: number };
   deployments?: { old: Deployment?; new: Deployment };
 }
