@@ -1,10 +1,14 @@
 import { size } from "../utils";
-import { Show } from "solid-js";
+import { Component, Show } from "solid-js";
 
-export const Size = (bytes: number, signed: boolean = false) => {
+export const Size: Component<{
+  bytes: number;
+  signed?: boolean;
+}> = ({ bytes, signed }) => {
   const [value, unit] = size(Math.abs(bytes));
+
   return (
-    <div class="control">
+    <div class="control ">
       <span class="tags has-addons">
         <b class="tag s-tag">
           <Show when={signed}>{bytes < 0 ? "- " : "+ "}</Show>

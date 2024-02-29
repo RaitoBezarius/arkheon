@@ -1,12 +1,17 @@
-import { Show } from "solid-js";
+import { Component, Show } from "solid-js";
 
-export const Version = ([value, count]: [string, number]) => (
-  <div class="control ">
-    <span class="tags has-addons">
-      <span class="tag">{value}</span>
-      <Show when={count > 1}>
-        <span class="tag is-white">&times;&nbsp;{count}</span>
-      </Show>
-    </span>
-  </div>
-);
+export const Version: Component<{
+  v: Version;
+  cls?: string;
+}> = ({ v, cls = "" }) => {
+  return (
+    <div class="control ">
+      <span class="tags has-addons">
+        <span class={`tag ${cls}`}>{v.value}</span>
+        <Show when={v.count > 1}>
+          <span class="tag is-white">&times;&nbsp;{v.count}</span>
+        </Show>
+      </span>
+    </div>
+  );
+};

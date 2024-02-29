@@ -17,7 +17,7 @@ export const size = (bytes: number): [string, string] => {
   return [(bytes / Math.pow(1024, range)).toFixed(2), units[range - 1]];
 };
 
-export const sortVersions = (versions: Array<string | null>) => {
+export const sortVersions = (versions: Array<string | null>): Version[] => {
   const bag: Map<string, number> = new Map();
   for (const _v of versions) {
     const v = _v === null ? "none" : _v;
@@ -25,5 +25,10 @@ export const sortVersions = (versions: Array<string | null>) => {
     bag.set(v, c === undefined ? 1 : c + 1);
   }
 
-  return Array.from(bag.entries());
+  return Array.from(bag.entries()).map(([v, c]) => {
+    return {
+      count: c,
+      value: v,
+    };
+  });
 };

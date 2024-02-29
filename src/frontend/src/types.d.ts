@@ -10,28 +10,40 @@ interface Machine {
   identifier: string;
 }
 
-type Versions = [Array<string?>, number];
-
-interface RawDiff {
-  added: { [index: string]: Versions };
-  removed: { [index: string]: Versions };
-  changed: { [index: string]: { old: Versions; new: Versions } };
-  sizes: { old: number; new: number };
-  deployments?: { old: Deployment?; new: Deployment };
-}
-
-interface Diff {
-  sizes: { old: number; new: number };
-  deployments?: { old: Deployment?; new: Deployment };
+interface Version {
+  value: string;
+  count: number;
 }
 
 interface Package {
   name: string;
-  versions: Versions;
+  size: number;
+  versions: Version[];
+  previous?: {
+    size: number;
+    versions: Version[];
+  };
 }
 
-interface PackageDiff {
-  name: string;
-  old: Versions;
-  new: Versions;
+interface Diff {
+  added: Package[];
+  removed: Package[];
+  changed: Package[];
+  deployment: Deployment;
+  sizes: { old: number; new: number };
+}
+
+// Raw data coming from the API
+type RawVersions = [Array<string | null>, number];
+
+type RawPackages = {
+  [index: string]: RawVersions | { old: RawVersions; new: RawVersions };
+};
+
+interface RawDiff {
+  added: RawPackages;
+  removed: RawPackages;
+  changed: RawPackages;
+  sizes: { old: number; new: number };
+  deployments: { old: Deployment?; new: Deployment };
 }
