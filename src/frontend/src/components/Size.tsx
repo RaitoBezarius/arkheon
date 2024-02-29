@@ -14,7 +14,7 @@ export const Size: Component<{
           <Show when={signed}>{bytes < 0 ? "- " : "+ "}</Show>
           {value}
         </b>
-        <span class="tag is-white u-tag">{unit}</span>
+        <span class="tag is-link is-light u-tag"><b>{unit}</b></span>
       </span>
     </div>
   );
