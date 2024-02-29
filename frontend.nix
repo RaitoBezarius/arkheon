@@ -1,10 +1,13 @@
 {
   nix-filter ? null,
   buildNpmPackage,
+  backendUrl ? "@backend@",
 }:
 buildNpmPackage {
   pname = "arkheon-web";
   version = "unstable-2024";
+
+  VITE_BACKEND_URL = backendUrl;
 
   src = if nix-filter != null
     then nix-filter {
