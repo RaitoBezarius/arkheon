@@ -36,7 +36,7 @@ export default function Diff() {
   };
 
   createEffect(() => {
-    get(`diff-latest?deployment_id=${params.id}`).then((d: RawDiff) => {
+    get(`diff-latest?deployment_id=${params.id}`, (d: RawDiff) => {
       setDiff({
         added: mkPackages(d.added),
         removed: mkPackages(d.removed),

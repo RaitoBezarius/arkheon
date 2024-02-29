@@ -6,7 +6,7 @@ export default function Home() {
   const [machines, setMachines] = createSignal([]);
 
   createEffect(() => {
-    get("machines").then(setMachines);
+    get("machines", setMachines);
   });
 
   return (

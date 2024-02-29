@@ -1,7 +1,18 @@
 const units = Array.of("KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB");
 
-export const get = async (path: string) =>
-  fetch(`${import.meta.env.VITE_BACKEND_URL}/${path}`).then((d) => d.json());
+type AbstractFunction = (_: any) => void;
+
+export const get = async (path: string, f: AbstractFunction) =>
+  fetch(`${import.meta.env.VITE_BACKEND_URL}/${path}`)
+    .then((d) => {
+      if (!d.ok) throw new Error(`API returned status ${d.status}`);
+
+      return d.json();
+    })
+    .then(f)
+    .catch((e) => {
+      location.replace(`/api-error?error=${e}`);
+    });
 
 export const date = (s: string) =>
   new Intl.DateTimeFormat("en-GB", {
