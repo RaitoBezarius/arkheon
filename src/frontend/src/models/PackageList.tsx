@@ -92,7 +92,7 @@ export const PackageList: Component<{
 
                 <Show when={previous}>
                   <For each={previous!.versions}>
-                    {(v) => <Version v={v} />}
+                    {(v) => <Version v={v} cls="is-danger is-light" />}
                   </For>
 
                   <span class="control">
@@ -100,7 +100,7 @@ export const PackageList: Component<{
                   </span>
                 </Show>
 
-                <For each={versions}>{(v) => <Version v={v} />}</For>
+                <For each={versions}>{(v) => <Version v={v} cls="is-success is-light" />}</For>
               </div>
             )}
           </For>
