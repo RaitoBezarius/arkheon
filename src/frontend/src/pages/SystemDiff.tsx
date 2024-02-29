@@ -42,7 +42,7 @@ export default function Diff() {
         removed: mkPackages(d.removed),
         changed: mkPackages(d.changed),
         sizes: d.sizes,
-        deployment: d.deployments.new,
+        deployment: d.deployment,
       });
     });
   });

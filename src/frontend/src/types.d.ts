@@ -45,5 +45,5 @@ interface RawDiff {
   removed: RawPackages;
   changed: RawPackages;
   sizes: { old: number; new: number };
-  deployments: { old: Deployment?; new: Deployment };
+  deployment: Deployment;
 }
