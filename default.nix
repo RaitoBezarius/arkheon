@@ -15,7 +15,7 @@
       exclude = [ "node_modules" ];
     };
 
-    npmDepsHash = "sha256-9LdjB51zn2PPEpO2Avg6Imb3s50+IXkpz4LJcBPsuD8=";
+    npmDepsHash = "sha256-PMi2i3Rzu2mZpMxcFIYMGDARiWS3X2Zbk904hZbCiR8=";
 
     installPhase = ''
       mv dist $out

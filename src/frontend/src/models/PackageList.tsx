@@ -1,6 +1,7 @@
 import { Component, For, Show, createSignal } from "solid-js";
 import { Version } from "../components/Version";
 import { Size } from "../components/Size";
+import { FaSolidArrowsUpDown } from "solid-icons/fa";
 
 const enum Sort {
   Alphabetical = "Alphabetical",
@@ -61,6 +62,17 @@ export const PackageList: Component<{
             <Switch value={Sort.Alphabetical} />
 
             <Switch value={Sort.Size} />
+
+            <p class="control">
+              <button
+                class="button is-small is-light is-link"
+                onclick={() => setPkgs((pkgs) => pkgs.reverse())}
+              >
+                <span class="icon">
+                  <FaSolidArrowsUpDown />
+                </span>
+              </button>
+            </p>
           </div>
 
           <h2 class="title">{title}</h2>
