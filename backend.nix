@@ -49,7 +49,7 @@ buildPythonPackage rec {
     description = "Track your Nix closures over time";
     homepage = "https://github.com/RaitoBezarius/arkheon/";
     license = licenses.eupl12;
-    maintainers = with maintainers; [ ];
+    maintainers = with maintainers; [ raitobezarius thubrecht ];
     mainProgram = "arkheon";
     platforms = platforms.all;
   };
