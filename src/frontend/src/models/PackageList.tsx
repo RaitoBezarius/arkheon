@@ -1,20 +1,71 @@
-import { Component, For, Show } from "solid-js";
+import { Component, For, Show, createSignal } from "solid-js";
 import { Version } from "../components/Version";
 import { Size } from "../components/Size";
+
+const enum Sort {
+  Alphabetical = "Alphabetical",
+  Size = "Size",
+  None = "None",
+}
+
+const delta = (p: Package): number =>
+  p.size - (p.previous ? p.previous.size : 0);
 
 export const PackageList: Component<{
   title: string;
   color: "danger" | "success" | "warning";
   entries: Package[];
 }> = ({ entries, color, title }) => {
-  // const [sort, setSort] = createSignal(Sort.None);
-  //
+  const [sort, setSort] = createSignal(Sort.None);
+  const [pkgs, setPkgs] = createSignal(entries, { equals: false });
+
+  const Switch: Component<{ value: Sort }> = ({ value }) => {
+    return (
+      <p class="control">
+        <button
+          class="button is-small"
+          classList={{
+            "is-link": sort() === value,
+            "is-light": sort() !== value,
+            // TODO: Add loading indication (using async ?)
+            // "is-loading": loading(),
+          }}
+          onclick={() => updateSort(value)}
+        >
+          {value}
+        </button>
+      </p>
+    );
+  };
+
+  const updateSort = (s: Sort) => {
+    if (s === sort()) return;
+
+    setSort(s);
+
+    switch (s) {
+      case Sort.Alphabetical:
+        setPkgs((pkgs) => pkgs.sort((a, b) => a.name.localeCompare(b.name)));
+        break;
+      case Sort.Size:
+        setPkgs((pkgs) => pkgs.sort((a, b) => delta(a) - delta(b)));
+        break;
+    }
+  };
+
   return (
     <Show when={entries.length > 0}>
       <section class={`hero is-${color} block`}>
         <div class="hero-body py-5">
+          <div class="field has-addons is-pulled-right">
+            <Switch value={Sort.Alphabetical} />
+
+            <Switch value={Sort.Size} />
+          </div>
+
           <h2 class="title">{title}</h2>
-          <For each={entries}>
+
+          <For each={pkgs()}>
             {({ name, size, versions, previous = null }) => (
               <div class="field is-grouped pkg">
                 <Show when={previous} fallback={<Size bytes={size} />}>
