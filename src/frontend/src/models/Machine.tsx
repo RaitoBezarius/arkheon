@@ -8,7 +8,7 @@ export const Machine: Component<Machine> = (props) => {
   const [deployments, setDeployments] = createSignal([]);
 
   createEffect(() => {
-    get(`deployments/${props.identifier}`).then(setDeployments);
+    get(`deployments/${props.identifier}`, setDeployments);
   });
 
   return (
