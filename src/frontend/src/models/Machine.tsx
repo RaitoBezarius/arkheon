@@ -2,10 +2,13 @@ import { Component, For, createEffect, createSignal, Show } from "solid-js";
 import { Collapse } from "solid-collapse";
 import { Deployment } from "./Deployment.tsx";
 import { get } from "../utils";
+import { FaSolidChevronDown, FaSolidChevronUp } from "solid-icons/fa";
 
 export const Machine: Component<Machine> = (props) => {
-  const [isExpanded, _] = createSignal(true);
+  const [isExpanded, setExpanded] = createSignal(true);
   const [deployments, setDeployments] = createSignal([]);
+
+  const toggle = () => setExpanded((e) => !e);
 
   createEffect(() => {
     get(`deployments/${props.identifier}`, setDeployments);
@@ -13,9 +16,18 @@ export const Machine: Component<Machine> = (props) => {
 
   return (
     <div class="box">
+      <button class="button is-small is-pulled-right" onclick={toggle}>
+        <span class="icon">
+          {isExpanded() ? <FaSolidChevronUp /> : <FaSolidChevronDown />}
+        </span>
+      </button>
+
       <h3 class="mb-3">
-        <b>{props.identifier}</b>
+        <b>
+          {props.identifier} [{deployments().length}]
+        </b>
       </h3>
+
       <Show
         when={deployments().length > 0}
         fallback={<p>No deployment available yet.</p>}
