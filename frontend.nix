@@ -1,5 +1,5 @@
 {
-  nix-filter ? null,
+  lib,
   buildNpmPackage,
   backendUrl ? "@backend@",
 }:
@@ -9,12 +9,14 @@ buildNpmPackage {
 
   VITE_BACKEND_URL = backendUrl;
 
-  src = if nix-filter != null
-    then nix-filter {
-      root = ./src/frontend;
-      exclude = [ "node_modules" ];
-    }
-    else ./src/frontend;
+  src = with lib.fileset; toSource {
+    root = ./.;
+    fileset = intersection
+      (gitTracked ./.)
+      (fileFilter (file: ! file.hasExt "nix") ./src/frontend)
+    ;
+  };
+  sourceRoot = "source/src/frontend";
 
   npmDepsHash = "sha256-PMi2i3Rzu2mZpMxcFIYMGDARiWS3X2Zbk904hZbCiR8=";
 
