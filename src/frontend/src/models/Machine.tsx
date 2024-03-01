@@ -25,7 +25,7 @@ export const Machine: Component<Machine> = (props) => {
         </span>
       </button>
 
-      <h3 class="mb-3">
+      <h3>
         <b>
           {props.identifier} [{deployments().length}]
         </b>
@@ -36,7 +36,7 @@ export const Machine: Component<Machine> = (props) => {
         fallback={<p>No deployment available yet.</p>}
       >
         <Collapse value={isExpanded()}>
-          <table class="table is-narrow is-fullwidth is-striped">
+          <table class="table is-narrow is-fullwidth is-striped mt-3">
             <tbody class="is-size-7">
               <For each={deployments()}>
                 {(d: Deployment) => <Deployment {...d} />}

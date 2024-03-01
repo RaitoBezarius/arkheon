@@ -53,18 +53,18 @@ export default function Diff() {
         <>
           <div class="block">
             <div class="field is-horizontal">
-              <label class="label my-0 mr-3">New closure size :</label>
+              <label class="label diff">New closure size :</label>
               <Size bytes={d().sizes.new} />
             </div>
 
             <div class="field is-horizontal">
-              <label class="label my-0 mr-3">Old closure size :</label>
+              <label class="label diff">Old closure size :</label>
               <Size bytes={d().sizes.old} />
             </div>
 
             <div class="field is-horizontal">
-              <label class="label m-0">Applied on :</label>
-              <div class="tags has-addons ml-2">
+              <label class="label diff">Applied on :</label>
+              <div class="tags has-addons">
                 <span class="tag is-family-monospace">
                   {date(d().deployment.created_at)}
                 </span>
