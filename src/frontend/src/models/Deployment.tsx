@@ -3,18 +3,22 @@ import { date } from "../utils";
 
 export const Deployment: Component<Deployment> = (props) => {
   return (
-    <div class="tags has-addons mt-1">
-      <span class="tag is-dark is-family-monospace">
-        {date(props.created_at)}
-      </span>
+    <tr>
+      <td>
+        <span class="is-family-monospace">{date(props.created_at)}</span>
+      </td>
 
-      <a class="tag is-family-monospace" href={`/diff/${props.id}`}>
-        {props.toplevel}
-      </a>
+      <td>
+        <a class="is-family-monospace" href={`/diff/${props.id}`}>
+          {props.toplevel}
+        </a>
+      </td>
 
-      <span class="tag is-link">
-        by&nbsp;<b>{props.operator_id}</b>
-      </span>
-    </div>
+      <td>
+        <span>
+          by&nbsp;<b>{props.operator_id}</b>
+        </span>
+      </td>
+    </tr>
   );
 };

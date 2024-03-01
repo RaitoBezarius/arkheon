@@ -16,7 +16,10 @@ export const Machine: Component<Machine> = (props) => {
 
   return (
     <div class="box">
-      <button class="button is-small is-pulled-right" onclick={toggle}>
+      <button
+        class="button is-small is-link is-light is-pulled-right"
+        onclick={toggle}
+      >
         <span class="icon">
           {isExpanded() ? <FaSolidChevronUp /> : <FaSolidChevronDown />}
         </span>
@@ -33,15 +36,13 @@ export const Machine: Component<Machine> = (props) => {
         fallback={<p>No deployment available yet.</p>}
       >
         <Collapse value={isExpanded()}>
-          <ul>
-            <For each={deployments()}>
-              {(deployment: Deployment) => (
-                <li>
-                  <Deployment {...deployment} />
-                </li>
-              )}
-            </For>
-          </ul>
+          <table class="table is-narrow is-fullwidth is-striped">
+            <tbody class="is-size-7">
+              <For each={deployments()}>
+                {(d: Deployment) => <Deployment {...d} />}
+              </For>
+            </tbody>
+          </table>
         </Collapse>
       </Show>
     </div>
