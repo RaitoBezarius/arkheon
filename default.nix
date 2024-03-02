@@ -23,5 +23,9 @@
       pkgs.jq
       pkgs.nodejs
     ];
+
+    shellHook = ''
+      export SQLALCHEMY_DATABASE_URL="sqlite:///$(git rev-parse --show-toplevel)/arkheon.db"
+    '';
   };
 }
