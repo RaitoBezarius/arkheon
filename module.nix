@@ -1,4 +1,10 @@
-{ config, pkgs, lib, modulesPath, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  modulesPath,
+  ...
+}:
 let
   cfg = config.services.arkheon;
   hasSSL = with cfg.nginx; onlySSL || enableSSL || addSSL || forceSSL;
@@ -10,18 +16,20 @@ in
       internal = true;
       visible = false;
       type = lib.types.package;
-      default = pkgs.python3.withPackages (ps: [
+      default = pkgs.python3.withPackages (
+        ps: [
           ps.arkheon
           ps.daphne
           ps.psycopg2
-        ]);
+        ]
+      );
       example = lib.literalExpression ''
         pkgs.python3.withPackages (ps: [
           ps.arkheon
           ps.uvicorn
           ps.gunicorn
         ]);
-        '';
+      '';
     };
     port = lib.mkOption {
       type = with lib.types; nullOr port;
@@ -34,12 +42,12 @@ in
       description = "The address the server will listen on (will be passed using --host flag)";
     };
     settings = lib.mkOption {
-      type = with lib.types; submodule {
-        freeformType = attrsOf str;
-        options.SQLALCHEMY_DATABASE_URL = lib.mkOption {
-          description = "Database url";
+      type =
+        with lib.types;
+        submodule {
+          freeformType = attrsOf str;
+          options.SQLALCHEMY_DATABASE_URL = lib.mkOption { description = "Database url"; };
         };
-      };
       description = "Settings to pass as environment variables";
     };
     envFile = lib.mkOption {
@@ -52,9 +60,11 @@ in
       description = "Hostname for reverse proxy config. To configure";
     };
     nginx = lib.mkOption {
-      type = lib.types.nullOr (lib.types.submodule (
+      type = lib.types.nullOr (
+        lib.types.submodule (
           (import (modulesPath + "/services/web-servers/nginx/vhost-options.nix") { inherit config lib; })
-      ));
+        )
+      );
       example = lib.literalExpression ''
         {
           serverAliases = [
@@ -82,16 +92,14 @@ in
           ensureDBOwnership = true;
         }
       ];
-      ensureDatabases = [
-        "arkheon"
-      ];
+      ensureDatabases = [ "arkheon" ];
     };
     services.arkheon = {
       settings.SQLALCHEMY_DATABASE_URL = lib.mkDefault "postgresql+psycopg2:///arkheon?host=/run/postgresql";
       nginx.locations = {
         "/" = {
           root = pkgs.python3.pkgs.arkheon.frontend.override {
-              backendUrl = "http${lib.optionalString hasSSL "s"}://${cfg.domain}/api";
+            backendUrl = "http${lib.optionalString hasSSL "s"}://${cfg.domain}/api";
           };
           tryFiles = "$uri /index.html";
         };
@@ -110,7 +118,10 @@ in
       };
       wantedBy = [ "multi-user.target" ];
       wants = [ "postgresql.target" ];
-      after = [ "network.target" "postgresql.service" ];
+      after = [
+        "network.target"
+        "postgresql.service"
+      ];
     };
     services.nginx = lib.mkIf (cfg.nginx != null) {
       enable = true;

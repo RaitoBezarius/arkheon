@@ -4,9 +4,9 @@
 }:
 
 {
-  frontend = pkgs.callPackage ./frontend.nix {};
+  frontend = pkgs.callPackage ./frontend.nix { };
 
-  backend = pkgs.python3.pkgs.callPackage ./backend.nix {};
+  backend = pkgs.python3.pkgs.callPackage ./backend.nix { };
 
   tests = import ./tests { inherit sources pkgs; };
 
