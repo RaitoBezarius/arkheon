@@ -62,7 +62,7 @@ in
     nginx = lib.mkOption {
       type = lib.types.nullOr (
         lib.types.submodule (
-          (import (modulesPath + "/services/web-servers/nginx/vhost-options.nix") { inherit config lib; })
+          import (modulesPath + "/services/web-servers/nginx/vhost-options.nix") { inherit config lib; }
         )
       );
       example = lib.literalExpression ''
@@ -83,27 +83,36 @@ in
       '';
     };
   };
+
   config = {
-    services.postgresql = lib.mkIf (lib.hasPrefix "postgresql" cfg.settings.SQLALCHEMY_DATABASE_URL) {
-      enable = true;
-      ensureUsers = [
-        {
-          name = "arkheon";
-          ensureDBOwnership = true;
-        }
-      ];
-      ensureDatabases = [ "arkheon" ];
-    };
-    services.arkheon = {
-      settings.SQLALCHEMY_DATABASE_URL = lib.mkDefault "postgresql+psycopg2:///arkheon?host=/run/postgresql";
-      nginx.locations = {
-        "/" = {
-          root = pkgs.python3.pkgs.arkheon.frontend.override {
-            backendUrl = "http${lib.optionalString hasSSL "s"}://${cfg.domain}/api";
+    services = {
+      postgresql = lib.mkIf (lib.hasPrefix "postgresql" cfg.settings.SQLALCHEMY_DATABASE_URL) {
+        enable = true;
+        ensureUsers = [
+          {
+            name = "arkheon";
+            ensureDBOwnership = true;
+          }
+        ];
+        ensureDatabases = [ "arkheon" ];
+      };
+
+      arkheon = {
+        settings.SQLALCHEMY_DATABASE_URL = lib.mkDefault "postgresql+psycopg2:///arkheon?host=/run/postgresql";
+        nginx.locations = {
+          "/" = {
+            root = pkgs.python3.pkgs.arkheon.frontend.override {
+              backendUrl = "http${lib.optionalString hasSSL "s"}://${cfg.domain}/api";
+            };
+            tryFiles = "$uri /index.html";
           };
-          tryFiles = "$uri /index.html";
+          "/api/".proxyPass = "http://${cfg.address}:${builtins.toString cfg.port}/";
         };
-        "/api/".proxyPass = "http://${cfg.address}:${builtins.toString cfg.port}/";
+      };
+
+      nginx = lib.mkIf (cfg.nginx != null) {
+        enable = true;
+        virtualHosts.${cfg.domain} = cfg.nginx;
       };
     };
 
@@ -122,10 +131,6 @@ in
         "network.target"
         "postgresql.service"
       ];
-    };
-    services.nginx = lib.mkIf (cfg.nginx != null) {
-      enable = true;
-      virtualHosts.${cfg.domain} = cfg.nginx;
     };
   };
 }
