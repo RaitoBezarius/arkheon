@@ -8,6 +8,8 @@
 
   backend = pkgs.python3.pkgs.callPackage ./backend.nix {};
 
+  tests = import ./tests { inherit sources pkgs; };
+
   shell = pkgs.mkShell {
     buildInputs = [
       (pkgs.python3.withPackages (
