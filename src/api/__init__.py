@@ -1,5 +1,6 @@
 from typing import Optional
 
+import httpx
 from fastapi import Depends, FastAPI, HTTPException, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -106,23 +107,36 @@ def record_deployment(
     operator: str = "default",
     db: Session = Depends(get_db),
 ):
-    last_deployment = (
+    last = (
         db.query(D)
         .where(D.target_machine.has(M.identifier == machine_identifier))
         .order_by(D.id.desc())
         .first()
     )
 
-    if last_deployment is not None and last_deployment.toplevel == toplevel:
+    if last is not None and last.toplevel == toplevel:
         response.status_code = status.HTTP_409_CONFLICT
         return {"message": "This system has already been recorded."}
 
-    deployment = crud.record_deployment(
-        db, machine_identifier, closure, toplevel, operator
-    )
-    return {
-        "message": f"{deployment.id} recorded for machine {deployment.target_machine}"
-    }
+    d = crud.record_deployment(db, machine_identifier, closure, toplevel, operator)
+
+    # Send data to all regitered webhooks
+    # prev closure size, new closure size, operator, deployment ID
+    for w in d.target_machine.webhooks:
+        httpx.post(
+            w.endpoint,
+            data={
+                "operator": operator,
+                "machine": machine_identifier,
+                "deployment_id": d.id,
+                "closure_size": size_from_path(d.toplevel, db),
+                "previous_size": size_from_path(last.toplevel, db)
+                if last is not None
+                else 0,
+            },
+        )
+
+    return {"message": f"{d.id} recorded for machine {d.target_machine.identifier}"}
 
 
 @app.get("/deployments/{machine_identifier}")

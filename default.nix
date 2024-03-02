@@ -18,6 +18,7 @@
           ps.uvicorn
           ps.sqlalchemy
           ps.pydantic
+          ps.httpx
         ]
       ))
       pkgs.jq

@@ -1,9 +1,10 @@
 import datetime
+from functools import cached_property
 from typing import List
 
 from sqlalchemy import (Column, DateTime, ForeignKey, Integer, Table,
                         UniqueConstraint, func)
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, Session, mapped_column, relationship
 
 from .db import Base
 
@@ -93,9 +94,19 @@ class Deployment(Base):
     toplevel: Mapped[str] = mapped_column(unique=True, index=True)
 
 
+class WebHook(Base):
+    __tablename__ = "webhooks"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    endpoint: Mapped[str] = mapped_column()
+    trigger_id: Mapped[int] = mapped_column(ForeignKey("machines.id"))
+    trigger: Mapped["Machine"] = relationship(back_populates="webhooks")
+
+
 class Machine(Base):
     __tablename__ = "machines"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     identifier: Mapped[str] = mapped_column(unique=True, index=True)
     deployments: Mapped[List[Deployment]] = relationship()
+    webhooks: Mapped[List[WebHook]] = relationship()
