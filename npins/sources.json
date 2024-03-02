@@ -1,17 +1,5 @@
 {
   "pins": {
-    "nix-filter": {
-      "type": "Git",
-      "repository": {
-        "type": "GitHub",
-        "owner": "numtide",
-        "repo": "nix-filter"
-      },
-      "branch": "main",
-      "revision": "3449dc925982ad46246cfc36469baf66e1b64f17",
-      "url": "https://github.com/numtide/nix-filter/archive/3449dc925982ad46246cfc36469baf66e1b64f17.tar.gz",
-      "hash": "1ckb6pw2lqw7agp400vx9a1y73jzbvb8n8rl7rwd6yw9az43bk4i"
-    },
     "nixpkgs": {
       "type": "Channel",
       "name": "nixpkgs-unstable",

@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "arkheon"
+version = "0.1.0"
+authors = [
+  { name="Tom Hubrecht", email="tom@hubrecht.ovh" },
+  { name="Raito Bezarius", email="masterancpp@gmail.com" },
+  { name="sinavir", email="sinavir@sinavir.fr" },
+]
+description = "Track your Nix closures over time"
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)",
+    "Framework :: FastAPI",
+]
+dependencies = [
+  "sqlalchemy>=2.0.21",
+  "pydantic>=1.10.12",
+  "fastapi>=0.103.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/RaitoBezarius/arkheon"
+Issues = "https://github.com/RaitoBezarius/arkheon/issues"
+
+[tool.hatch.build.targets.wheel]
+only-include = [ "src/api" ]
+
+[tool.hatch.build.targets.wheel.sources]
+"src/api" = "arkheon"

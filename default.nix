@@ -1,26 +1,14 @@
 {
   sources ? import ./npins,
   pkgs ? import sources.nixpkgs { },
-  nix-filter ? import sources.nix-filter,
 }:
 
 {
-  frontend = pkgs.buildNpmPackage {
-    pname = "arkheon-web";
-    version = "unstable-2024";
+  frontend = pkgs.callPackage ./frontend.nix {};
 
-    src = nix-filter {
-      root = ./src/frontend;
+  backend = pkgs.python3.pkgs.callPackage ./backend.nix {};
 
-      exclude = [ "node_modules" ];
-    };
-
-    npmDepsHash = "sha256-PMi2i3Rzu2mZpMxcFIYMGDARiWS3X2Zbk904hZbCiR8=";
-
-    installPhase = ''
-      mv dist $out
-    '';
-  };
+  tests = import ./tests { inherit sources pkgs; };
 
   shell = pkgs.mkShell {
     buildInputs = [
