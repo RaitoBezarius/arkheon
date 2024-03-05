@@ -5,9 +5,9 @@ from typing import Annotated, List, Optional
 from fastapi import FastAPI
 from pydantic import BaseModel, Field, HttpUrl, TypeAdapter
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from sqlalchemy import delete, insert
 
 from .db import SessionLocal
+from .models import Machine as M
 from .models import WebHook as W
 
 
@@ -26,7 +26,6 @@ class Settings(BaseSettings):
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     settings = Settings()
-    db = SessionLocal()
 
     if settings.token is None:
         logging.warn("No token is provided for Arkheon.")
@@ -41,12 +40,19 @@ async def lifespan(_: FastAPI):
             ws = TypeAdapter(List[WebHookConfig]).validate_json(fd.read())
 
         logging.info(f"Registering webhooks from {settings.webhook_file}.")
-        for w in ws:
-            db.execute(
-                insert(W).values({"trigger_id": w.machine, "endpoint": str(w.endpoint)})
-            )
+        with SessionLocal() as db:
+            for w in ws:
+                trigger = db.query(M).filter(M.identifier == w.machine).one()
+                db.add(W(trigger=trigger, endpoint=str(w.endpoint)))
+                logging.debug(
+                    f"Added a webhook for {trigger.identifier} at {w.endpoint}"
+                )
+
+            db.commit()
 
     yield
 
-    db.execute(delete(W))
-    # TODO: clear config ?
+    with SessionLocal() as db:
+        # Delete the registered webhooks
+        db.query(W).delete()
+        db.commit()

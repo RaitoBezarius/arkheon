@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 
 import httpx
@@ -10,6 +11,8 @@ from .config import lifespan
 from .db import engine, get_db
 from .package import closure_paths_to_map
 from .schemas import DeploymentDTO
+
+logger = logging.getLogger(__name__)
 
 D = models.Deployment
 M = models.Machine
@@ -116,6 +119,7 @@ def record_deployment(
     # Send data to all regitered webhooks
     # prev closure size, new closure size, operator, deployment ID
     for w in d.target_machine.webhooks:
+        logger.debug(f"Webhook trigger for {d.target_machine.identifier}: {w.endpoint}")
         httpx.post(
             w.endpoint,
             data={
