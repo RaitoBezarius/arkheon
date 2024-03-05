@@ -1,10 +1,9 @@
 import datetime
-from functools import cached_property
 from typing import List
 
 from sqlalchemy import (Column, DateTime, ForeignKey, Integer, Table,
                         UniqueConstraint, func)
-from sqlalchemy.orm import Mapped, Session, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .db import Base
 
