@@ -10,6 +10,8 @@ from .db import SessionLocal
 from .models import Machine as M
 from .models import WebHook as W
 
+logger = logging.getLogger(__name__)
+
 
 class WebHookConfig(BaseModel):
     machine: str
@@ -28,10 +30,10 @@ async def lifespan(_: FastAPI):
     settings = Settings()
 
     if settings.token is None:
-        logging.warn("No token is provided for Arkheon.")
+        logger.warn("No token is provided for Arkheon.")
 
     if settings.webhook_file is None:
-        logging.warn(
+        logger.warn(
             "No webhook file declared, notifications on records will be disabled."
         )
     else:
@@ -39,12 +41,12 @@ async def lifespan(_: FastAPI):
         with open(settings.webhook_file) as fd:
             ws = TypeAdapter(List[WebHookConfig]).validate_json(fd.read())
 
-        logging.info(f"Registering webhooks from {settings.webhook_file}.")
+        logger.info(f"Registering webhooks from {settings.webhook_file}.")
         with SessionLocal() as db:
             for w in ws:
                 trigger = db.query(M).filter(M.identifier == w.machine).one()
                 db.add(W(trigger=trigger, endpoint=str(w.endpoint)))
-                logging.debug(
+                logger.debug(
                     f"Added a webhook for {trigger.identifier} at {w.endpoint}"
                 )
 
