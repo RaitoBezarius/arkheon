@@ -90,17 +90,26 @@ export const PackageList: Component<{
                   </span>
                 </div>
 
-                <Show when={previous}>
+                <Show
+                  when={previous}
+                  fallback={
+                    <For each={versions}>
+                      {(v) => <Version v={v} cls="is-white" />}
+                    </For>
+                  }
+                >
                   <For each={previous!.versions}>
-                    {(v) => <Version v={v} cls="is-danger is-light" />}
+                    {(v) => <Version v={v} cls="is-danger is-light has-text-black" />}
                   </For>
 
                   <span class="control">
                     <b class="is-size-7">to</b>
                   </span>
-                </Show>
 
-                <For each={versions}>{(v) => <Version v={v} cls="is-success is-light" />}</For>
+                  <For each={versions}>
+                    {(v) => <Version v={v} cls="is-success is-light has-text-black" />}
+                  </For>
+                </Show>
               </div>
             )}
           </For>
