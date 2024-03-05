@@ -56,7 +56,7 @@ export const PackageList: Component<{
 
   return (
     <Show when={entries.length > 0}>
-      <section class={`hero is-${color} block`}>
+      <section class={`notification p-0 is-${color} block`}>
         <div class="hero-body py-5">
           <div class="field has-addons is-pulled-right">
             <Switch value={Sort.Alphabetical} />
