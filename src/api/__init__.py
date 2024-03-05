@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from . import crud, models, schemas
+from .config import lifespan
 from .db import engine, get_db
 from .package import closure_paths_to_map
 from .schemas import DeploymentDTO
@@ -16,7 +17,7 @@ S = models.StorePath
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 origins = [
     "http://localhost:3003",
