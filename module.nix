@@ -8,11 +8,13 @@
 
 let
   inherit (lib)
+    getExe
     literalExpression
-    mkEnableOption
-    mkOption
-    mkIf
     mkDefault
+    mkEnableOption
+    mkIf
+    mkMerge
+    mkOption
     optional
     optionalString
     ;
@@ -35,17 +37,33 @@ in
   options.services.arkheon = {
     enable = mkEnableOption "Arkheon";
 
+    record = {
+      enable = mkEnableOption "Arkheon recording of deployments.";
+
+      tokenFile = mkOption {
+        type = nullOr path;
+        default = null;
+        description = ''
+          Path to a file containing the token used for authorized records post.
+        '';
+      };
+
+      url = mkOption {
+        type = str;
+        description = "URL of the Arkheon server.";
+        example = "http://127.0.0.1:8000";
+      };
+    };
+
     pythonEnv = mkOption {
       internal = true;
       visible = false;
       type = package;
-      default = pkgs.python3.withPackages (
-        ps: [
-          ps.arkheon
-          ps.daphne
-          ps.psycopg2
-        ]
-      );
+      default = pkgs.python3.withPackages (ps: [
+        ps.arkheon
+        ps.daphne
+        ps.psycopg2
+      ]);
 
       example = literalExpression ''
         pkgs.python3.withPackages (ps: [
@@ -114,54 +132,83 @@ in
     };
   };
 
-  config = {
-    services = {
-      postgresql = mkIf (lib.hasPrefix "postgresql" cfg.settings.SQLALCHEMY_DATABASE_URL) {
-        enable = true;
-        ensureUsers = [
-          {
-            name = "arkheon";
-            ensureDBOwnership = true;
-          }
-        ];
-        ensureDatabases = [ "arkheon" ];
-      };
+  config = mkMerge [
+    (mkIf cfg.enable {
+      services = {
+        postgresql = mkIf (lib.hasPrefix "postgresql" cfg.settings.SQLALCHEMY_DATABASE_URL) {
+          enable = true;
+          ensureUsers = [
+            {
+              name = "arkheon";
+              ensureDBOwnership = true;
+            }
+          ];
+          ensureDatabases = [ "arkheon" ];
+        };
 
-      arkheon = {
-        settings.SQLALCHEMY_DATABASE_URL = mkDefault "postgresql+psycopg2:///arkheon?host=/run/postgresql";
+        arkheon = {
+          settings.SQLALCHEMY_DATABASE_URL = mkDefault "postgresql+psycopg2:///arkheon?host=/run/postgresql";
 
-        nginx.locations = {
-          "/" = {
-            root = pkgs.python3.pkgs.arkheon.frontend.override {
-              backendUrl = "http${optionalString hasSSL "s"}://${cfg.domain}/api";
+          nginx.locations = {
+            "/" = {
+              root = pkgs.python3.pkgs.arkheon.frontend.override {
+                backendUrl = "http${optionalString hasSSL "s"}://${cfg.domain}/api";
+              };
+              tryFiles = "$uri /index.html";
             };
-            tryFiles = "$uri /index.html";
+            "/api/".proxyPass = "http://${cfg.address}:${builtins.toString cfg.port}/";
           };
-          "/api/".proxyPass = "http://${cfg.address}:${builtins.toString cfg.port}/";
+        };
+
+        nginx = mkIf (cfg.nginx != null) {
+          enable = true;
+          virtualHosts.${cfg.domain} = cfg.nginx;
         };
       };
 
-      nginx = mkIf (cfg.nginx != null) {
-        enable = true;
-        virtualHosts.${cfg.domain} = cfg.nginx;
+      systemd.services.arkheon = {
+        environment = cfg.settings;
+        path = [ cfg.pythonEnv ];
+        script = "daphne arkheon:app -b ${cfg.address} -p ${builtins.toString cfg.port}";
+        serviceConfig = {
+          User = "arkheon";
+          DynamicUser = true;
+          EnvironmentFile = optional (cfg.envFile != null) cfg.envFile;
+        };
+        wantedBy = [ "multi-user.target" ];
+        wants = [ "postgresql.target" ];
+        after = [
+          "network.target"
+          "postgresql.service"
+        ];
       };
-    };
+    })
 
-    systemd.services.arkheon = mkIf cfg.enable {
-      environment = cfg.settings;
-      path = [ cfg.pythonEnv ];
-      script = "daphne arkheon:app -b ${cfg.address} -p ${builtins.toString cfg.port}";
-      serviceConfig = {
-        User = "arkheon";
-        DynamicUser = true;
-        EnvironmentFile = optional (cfg.envFile != null) cfg.envFile;
+    (mkIf cfg.record.enable {
+      system.activationScripts.arkheon-record = {
+        text = getExe (
+          pkgs.writeShellScriptApplication {
+            name = "arkheon-record";
+            runtimeInputs = [ pkgs.curl ];
+            # TODO: Find a way to leak the real operator
+            runtimeEnv.ARKHEON_OPERATOR = "colmena";
+
+            text = ''
+              TOP_LEVEL=$(nix path-info /run/current-system)
+              TOKEN=${optionalString (cfg.record.tokenFile != null) "$(cat cfg.record.tokenFile)"}
+
+              nix path-info --closure-size -rsh /run/current-system --json | curl -X POST \
+              	-H "Content-Type: application/json" \
+              	-H "X-Token: $TOKEN" \
+              	-H "X-Operator: $ARKHEON_OPERATOR" \
+              	-H "X-TopLevel: $TOP_LEVEL" \
+              	--data @- \
+              	"${cfg.record.url}/record/$(hostname)"
+            '';
+          }
+        );
+        supportsDryActivation = false;
       };
-      wantedBy = [ "multi-user.target" ];
-      wants = [ "postgresql.target" ];
-      after = [
-        "network.target"
-        "postgresql.service"
-      ];
-    };
-  };
+    })
+  ];
 }
