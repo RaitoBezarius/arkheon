@@ -20,7 +20,6 @@ This will record a deployment at this point in time for that `<identifier>` mach
 ### Short term
 
 - API to register webhooks to call upon deployments: regex on machine identifier?
-- Webhook push on each record
 - Production packaging
 - NixOS module
 
