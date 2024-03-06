@@ -1,8 +1,8 @@
 import logging
-from typing import Optional
+from typing import Annotated, Optional
 
 import httpx
-from fastapi import Depends, FastAPI, HTTPException, Response, status
+from fastapi import Depends, FastAPI, Header, HTTPException, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
@@ -45,7 +45,10 @@ def get_or_404(session, model, pk):
     return o
 
 
-def size_from_path(path: str, db: Session):
+def size_from_path(path: str | None, db: Session):
+    if path is None:
+        return 0
+
     return db.query(S).where(S.path == path).one().closure_size
 
 
@@ -94,14 +97,14 @@ def get_machines(db: Session = Depends(get_db)):
     return db.query(M).all()
 
 
-@app.post("/record/{machine_identifier}")
-def record_deployment(
-    machine_identifier: str,
+@app.post("/record/{machine}")
+def record(
+    machine: str,
     closure: list[schemas.StorePathCreate],
-    toplevel: str,
     response: Response,
-    x_token: Optional[str] = None,
-    operator: str = "default",
+    x_toplevel: Annotated[str, Header()],
+    x_operator: Annotated[str, Header()],
+    x_token: Annotated[str | None, Header()] = None,
     db: Session = Depends(get_db),
 ):
     if settings.token is not None and x_token != settings.token:
@@ -110,31 +113,28 @@ def record_deployment(
 
     last = (
         db.query(D)
-        .where(D.target_machine.has(M.identifier == machine_identifier))
+        .where(D.target_machine.has(M.identifier == machine))
         .order_by(D.id.desc())
         .first()
     )
 
-    if last is not None and last.toplevel == toplevel:
+    if last is not None and last.toplevel == x_toplevel:
         response.status_code = status.HTTP_409_CONFLICT
         return {"message": "This system has already been recorded."}
 
-    d = crud.record_deployment(db, machine_identifier, closure, toplevel, operator)
+    d = crud.record_deployment(db, machine, closure, x_toplevel, x_operator)
 
     # Send data to all regitered webhooks
-    # prev closure size, new closure size, operator, deployment ID
     for w in d.target_machine.webhooks:
         logger.debug(f"Webhook trigger for {d.target_machine.identifier}: {w.endpoint}")
         httpx.post(
             w.endpoint,
             data={
-                "operator": operator,
-                "machine": machine_identifier,
+                "operator": x_operator,
+                "machine": machine,
                 "deployment_id": d.id,
                 "closure_size": size_from_path(d.toplevel, db),
-                "previous_size": size_from_path(last.toplevel, db)
-                if last is not None
-                else 0,
+                "previous_size": size_from_path(last and last.toplevel, db),
             },
         )
 
