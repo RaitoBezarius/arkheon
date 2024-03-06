@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from . import crud, models, schemas
-from .config import lifespan
+from .config import lifespan, settings
 from .db import engine, get_db
 from .package import closure_paths_to_map
 from .schemas import DeploymentDTO
@@ -100,9 +100,14 @@ def record_deployment(
     closure: list[schemas.StorePathCreate],
     toplevel: str,
     response: Response,
+    x_token: Optional[str] = None,
     operator: str = "default",
     db: Session = Depends(get_db),
 ):
+    if settings.token is not None and x_token != settings.token:
+        response.status_code = status.HTTP_403_FORBIDDEN
+        return {"message": "Incorrect token given."}
+
     last = (
         db.query(D)
         .where(D.target_machine.has(M.identifier == machine_identifier))

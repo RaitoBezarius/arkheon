@@ -25,10 +25,11 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="ARKHEON_")
 
 
+settings = Settings()
+
+
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    settings = Settings()
-
     if settings.token is None:
         logger.warn("No token is provided for Arkheon.")
 
