@@ -149,7 +149,12 @@ def get_deployments(machine_identifier: str, db: Session = Depends(get_db)):
 @app.get("/diff-latest")
 def diff_latest(deployment_id: int, db: Session = Depends(get_db)):
     current = get_or_404(db, D, deployment_id)
-    previous = db.query(D).where(D.id < deployment_id).order_by(D.id.desc()).first()
+    previous = (
+        db.query(D)
+        .where(D.id < deployment_id, D.target_machine_id == current.target_machine_id)
+        .order_by(D.id.desc())
+        .first()
+    )
 
     return get_diff(current, previous, db)
 
