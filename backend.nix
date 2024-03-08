@@ -5,6 +5,7 @@
   pydantic,
   fastapi,
   sqlalchemy,
+  httpx,
   callPackage,
 }:
 
@@ -33,6 +34,7 @@ buildPythonPackage {
 
   propagatedBuildInputs = [
     fastapi
+    httpx
     pydantic
     sqlalchemy
   ];
