@@ -38,7 +38,7 @@ buildPythonPackage {
   ];
 
   postPatch = ''
-    substituteInPlace src/api/db.py --replace-fail 'connect_args={"check_same_thread": False}' ""
+    substituteInPlace src/api/db.py --replace 'connect_args={"check_same_thread": False}' ""
   '';
 
   passthru.frontend = callPackage ./frontend.nix { };
