@@ -209,7 +209,7 @@ in
               	-H "X-Operator: $ARKHEON_OPERATOR" \
               	-H "X-TopLevel: $TOP_LEVEL" \
               	--data @- \
-              	"${cfg.record.url}/record/$(hostname)"
+              	"${cfg.record.url}/api/record/$(hostname)"
             '';
           }
         );
