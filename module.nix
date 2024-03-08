@@ -186,33 +186,35 @@ in
 
     (mkIf cfg.record.enable {
       system.activationScripts.arkheon-record = {
-        text = getExe (
-          pkgs.writeShellApplication {
-            name = "arkheon-record";
-            runtimeInputs = [
-              pkgs.curl
-              pkgs.nix
-            ];
-            # TODO: Find a way to leak the real operator
-            # runtimeEnv.ARKHEON_OPERATOR = "colmena";
+        text = "${
+          getExe (
+            pkgs.writeShellApplication {
+              name = "arkheon-record";
+              runtimeInputs = [
+                pkgs.curl
+                pkgs.nix
+              ];
+              # TODO: Find a way to leak the real operator
+              # runtimeEnv.ARKHEON_OPERATOR = "colmena";
 
-            text = ''
-              ARKHEON_OPERATOR="colmena"
+              text = ''
+                ARKHEON_OPERATOR="colmena"
 
-              TOP_LEVEL=$(nix --extra-experimental-features nix-command path-info /run/current-system)
-              TOKEN=${optionalString (cfg.record.tokenFile != null) "$(cat ${cfg.record.tokenFile})"}
+                TOP_LEVEL=$(nix --extra-experimental-features nix-command path-info "$1")
+                TOKEN=${optionalString (cfg.record.tokenFile != null) "$(cat ${cfg.record.tokenFile})"}
 
-              nix --extra-experimental-features nix-command \
-                path-info --closure-size -rsh /run/current-system --json | curl -X POST \
-              	-H "Content-Type: application/json" \
-              	-H "X-Token: $TOKEN" \
-              	-H "X-Operator: $ARKHEON_OPERATOR" \
-              	-H "X-TopLevel: $TOP_LEVEL" \
-              	--data @- \
-              	"${cfg.record.url}/api/record/$(hostname)"
-            '';
-          }
-        );
+                nix --extra-experimental-features nix-command \
+                  path-info --closure-size -rsh "$1" --json | curl -X POST \
+                	-H "Content-Type: application/json" \
+                	-H "X-Token: $TOKEN" \
+                	-H "X-Operator: $ARKHEON_OPERATOR" \
+                	-H "X-TopLevel: $TOP_LEVEL" \
+                	--data @- \
+                	"${cfg.record.url}/api/record/$(hostname)"
+              '';
+            }
+          )
+        } $systemConfig";
         supportsDryActivation = false;
       };
     })
