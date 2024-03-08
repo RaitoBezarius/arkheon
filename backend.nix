@@ -6,6 +6,7 @@
   fastapi,
   sqlalchemy,
   httpx,
+  pydantic-settings,
   callPackage,
 }:
 
@@ -36,6 +37,7 @@ buildPythonPackage {
     fastapi
     httpx
     pydantic
+    pydantic-settings
     sqlalchemy
   ];
 
