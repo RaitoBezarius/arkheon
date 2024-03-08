@@ -200,7 +200,7 @@ in
               ARKHEON_OPERATOR="colmena"
 
               TOP_LEVEL=$(nix --extra-experimental-features nix-command path-info /run/current-system)
-              TOKEN=${optionalString (cfg.record.tokenFile != null) "$(cat cfg.record.tokenFile)"}
+              TOKEN=${optionalString (cfg.record.tokenFile != null) "$(cat ${cfg.record.tokenFile})"}
 
               nix --extra-experimental-features nix-command \
                 path-info --closure-size -rsh /run/current-system --json | curl -X POST \
