@@ -189,7 +189,10 @@ in
         text = getExe (
           pkgs.writeShellApplication {
             name = "arkheon-record";
-            runtimeInputs = [ pkgs.curl ];
+            runtimeInputs = [
+              pkgs.curl
+              pkgs.nix
+            ];
             # TODO: Find a way to leak the real operator
             # runtimeEnv.ARKHEON_OPERATOR = "colmena";
 
