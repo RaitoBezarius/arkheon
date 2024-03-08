@@ -36,13 +36,15 @@ export const Machine: Component<Machine> = (props) => {
         fallback={<p>No deployment available yet.</p>}
       >
         <Collapse value={isExpanded()}>
-          <table class="table is-narrow is-fullwidth is-striped mt-3">
-            <tbody class="is-size-7">
-              <For each={deployments()}>
-                {(d: Deployment) => <Deployment {...d} />}
-              </For>
-            </tbody>
-          </table>
+          <div class="table-container">
+            <table class="table is-narrow is-fullwidth is-striped mt-3">
+              <tbody class="is-size-7">
+                <For each={deployments()}>
+                  {(d: Deployment) => <Deployment {...d} />}
+                </For>
+              </tbody>
+            </table>
+          </div>
         </Collapse>
       </Show>
     </div>
