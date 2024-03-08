@@ -191,9 +191,11 @@ in
             name = "arkheon-record";
             runtimeInputs = [ pkgs.curl ];
             # TODO: Find a way to leak the real operator
-            runtimeEnv.ARKHEON_OPERATOR = "colmena";
+            # runtimeEnv.ARKHEON_OPERATOR = "colmena";
 
             text = ''
+              ARKHEON_OPERATOR="colmena"
+
               TOP_LEVEL=$(nix path-info /run/current-system)
               TOKEN=${optionalString (cfg.record.tokenFile != null) "$(cat cfg.record.tokenFile)"}
 
