@@ -187,7 +187,7 @@ in
     (mkIf cfg.record.enable {
       system.activationScripts.arkheon-record = {
         text = getExe (
-          pkgs.writeShellScriptApplication {
+          pkgs.writeShellApplication {
             name = "arkheon-record";
             runtimeInputs = [ pkgs.curl ];
             # TODO: Find a way to leak the real operator
