@@ -199,10 +199,11 @@ in
             text = ''
               ARKHEON_OPERATOR="colmena"
 
-              TOP_LEVEL=$(nix path-info /run/current-system)
+              TOP_LEVEL=$(nix --extra-experimental-features nix-command path-info /run/current-system)
               TOKEN=${optionalString (cfg.record.tokenFile != null) "$(cat cfg.record.tokenFile)"}
 
-              nix path-info --closure-size -rsh /run/current-system --json | curl -X POST \
+              nix --extra-experimental-features nix-command \
+                path-info --closure-size -rsh /run/current-system --json | curl -X POST \
               	-H "Content-Type: application/json" \
               	-H "X-Token: $TOKEN" \
               	-H "X-Operator: $ARKHEON_OPERATOR" \
