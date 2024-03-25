@@ -193,6 +193,7 @@ in
 
         path = [
           pkgs.curl
+          pkgs.nettools
           pkgs.nix
         ];
 
