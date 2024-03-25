@@ -185,37 +185,52 @@ in
     })
 
     (mkIf cfg.record.enable {
-      system.activationScripts.arkheon-record = {
-        text = "${
-          getExe (
-            pkgs.writeShellApplication {
-              name = "arkheon-record";
-              runtimeInputs = [
-                pkgs.curl
-                pkgs.nix
-              ];
-              # TODO: Find a way to leak the real operator
-              # runtimeEnv.ARKHEON_OPERATOR = "colmena";
+      systemd.services.arkheon-record = {
+        description = "Arkheon recording service.";
 
-              text = ''
-                ARKHEON_OPERATOR="colmena"
+        wants = [ "network-online.target" ];
+        after = [ "network-online.target" ];
 
-                TOP_LEVEL=$(nix --extra-experimental-features nix-command path-info "$1")
-                TOKEN=${optionalString (cfg.record.tokenFile != null) "$(cat ${cfg.record.tokenFile})"}
+        path = [
+          pkgs.curl
+          pkgs.nix
+        ];
 
-                nix --extra-experimental-features nix-command \
-                  path-info --closure-size -rsh "$1" --json | curl -X POST \
-                	-H "Content-Type: application/json" \
-                	-H "X-Token: $TOKEN" \
-                	-H "X-Operator: $ARKHEON_OPERATOR" \
-                	-H "X-TopLevel: $TOP_LEVEL" \
-                	--data @- \
-                	"${cfg.record.url}/api/record/$(hostname)"
-              '';
-            }
-          )
-        } $systemConfig";
-        supportsDryActivation = false;
+        environment = {
+          ARKHEON_OPERATOR = "colmena";
+          ARKHEON_URL = cfg.record.url;
+        };
+
+        script = ''
+          TOP_LEVEL=$(nix --extra-experimental-features nix-command path-info /run/current-system)
+
+          if [ -f "$CREDENTIALS_DIRECTORY/token" ]; then
+            TOKEN=$(cat "$CREDENTIALS_DIRECTORY/token")
+          fi
+
+          nix --extra-experimental-features nix-command \
+            path-info --closure-size -rsh /run/current-system --json | curl -X POST \
+            -H "Content-Type: application/json" \
+            -H "X-Token: $TOKEN" \
+            -H "X-Operator: $ARKHEON_OPERATOR" \
+            -H "X-TopLevel: $TOP_LEVEL" \
+            --data @- \
+            "$ARKHEON_URL/api/record/$(hostname)"
+        '';
+
+        serviceConfig = {
+          LoadCredential = optional (cfg.record.tokenFile != null) "token:${cfg.record.tokenFile}";
+          Restart = "on-failure";
+          RestartSec = "5s";
+          Type = "oneshot";
+        };
+      };
+
+      systemd.paths.arkheon-record = {
+        pathConfig = {
+          PathModified = "/run/current-system";
+          Unit = "arkheon-record.service";
+        };
       };
     })
   ];
