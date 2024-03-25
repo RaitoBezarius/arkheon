@@ -228,6 +228,8 @@ in
       };
 
       systemd.paths.arkheon-record = {
+        wantedBy = [ "multi-user.target" ];
+
         pathConfig = {
           PathModified = "/run/current-system";
           Unit = "arkheon-record.service";
