@@ -216,14 +216,16 @@ in
           };
 
           script = ''
-            TOP_LEVEL=$(nix --extra-experimental-features nix-command path-info /run/current-system)
+            SYSTEM=$(cat /var/lib/arkheon/.canary)
+
+            TOP_LEVEL=$(nix --extra-experimental-features nix-command path-info "$SYSTEM")
 
             if [ -f "$CREDENTIALS_DIRECTORY/token" ]; then
               TOKEN=$(cat "$CREDENTIALS_DIRECTORY/token")
             fi
 
             nix --extra-experimental-features nix-command \
-              path-info --closure-size -rsh /run/current-system --json | curl -X POST \
+              path-info --closure-size -rsh "$SYSTEM" --json | curl -X POST \
               -H "Content-Type: application/json" \
               -H "X-Token: $TOKEN" \
               -H "X-Operator: $ARKHEON_OPERATOR" \
