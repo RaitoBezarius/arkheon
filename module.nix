@@ -8,7 +8,6 @@
 
 let
   inherit (lib)
-    getExe
     literalExpression
     mkDefault
     mkEnableOption
@@ -185,54 +184,66 @@ in
     })
 
     (mkIf cfg.record.enable {
-      systemd.services.arkheon-record = {
-        description = "Arkheon recording service.";
-
-        wants = [ "network-online.target" ];
-        after = [ "network-online.target" ];
-
-        path = [
-          pkgs.curl
-          pkgs.nettools
-          pkgs.nix
-        ];
-
-        environment = {
-          ARKHEON_OPERATOR = "colmena";
-          ARKHEON_URL = cfg.record.url;
-        };
-
-        script = ''
-          TOP_LEVEL=$(nix --extra-experimental-features nix-command path-info /run/current-system)
-
-          if [ -f "$CREDENTIALS_DIRECTORY/token" ]; then
-            TOKEN=$(cat "$CREDENTIALS_DIRECTORY/token")
-          fi
-
-          nix --extra-experimental-features nix-command \
-            path-info --closure-size -rsh /run/current-system --json | curl -X POST \
-            -H "Content-Type: application/json" \
-            -H "X-Token: $TOKEN" \
-            -H "X-Operator: $ARKHEON_OPERATOR" \
-            -H "X-TopLevel: $TOP_LEVEL" \
-            --data @- \
-            "$ARKHEON_URL/api/record/$(hostname)"
+      system.activationScripts.arkheon-record = {
+        text = ''
+          echo $systemConfig > /var/lib/arkheon/.canary
         '';
 
-        serviceConfig = {
-          LoadCredential = optional (cfg.record.tokenFile != null) "token:${cfg.record.tokenFile}";
-          Restart = "on-failure";
-          RestartSec = "5s";
-          Type = "oneshot";
-        };
+        supportsDryActivation = true;
       };
 
-      systemd.paths.arkheon-record = {
-        wantedBy = [ "multi-user.target" ];
+      systemd = {
+        tmpfiles.rules = [ "d /var/lib/arkheon 0755 root root -" ];
 
-        pathConfig = {
-          PathModified = "/run/current-system";
-          Unit = "arkheon-record.service";
+        services.arkheon-record = {
+          description = "Arkheon recording service.";
+
+          wants = [ "network-online.target" ];
+          after = [ "network-online.target" ];
+
+          path = [
+            pkgs.curl
+            pkgs.nettools
+            pkgs.nix
+          ];
+
+          environment = {
+            ARKHEON_OPERATOR = "colmena";
+            ARKHEON_URL = cfg.record.url;
+          };
+
+          script = ''
+            TOP_LEVEL=$(nix --extra-experimental-features nix-command path-info /run/current-system)
+
+            if [ -f "$CREDENTIALS_DIRECTORY/token" ]; then
+              TOKEN=$(cat "$CREDENTIALS_DIRECTORY/token")
+            fi
+
+            nix --extra-experimental-features nix-command \
+              path-info --closure-size -rsh /run/current-system --json | curl -X POST \
+              -H "Content-Type: application/json" \
+              -H "X-Token: $TOKEN" \
+              -H "X-Operator: $ARKHEON_OPERATOR" \
+              -H "X-TopLevel: $TOP_LEVEL" \
+              --data @- \
+              "$ARKHEON_URL/api/record/$(hostname)"
+          '';
+
+          serviceConfig = {
+            LoadCredential = optional (cfg.record.tokenFile != null) "token:${cfg.record.tokenFile}";
+            Restart = "on-failure";
+            RestartSec = "5s";
+            Type = "oneshot";
+          };
+        };
+
+        paths.arkheon-record = {
+          wantedBy = [ "multi-user.target" ];
+
+          pathConfig = {
+            PathModified = "/var/lib/arkheon/.canary";
+            Unit = "arkheon-record.service";
+          };
         };
       };
     })
