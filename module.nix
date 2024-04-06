@@ -186,7 +186,10 @@ in
     (mkIf cfg.record.enable {
       system.activationScripts.arkheon-record = {
         text = ''
-          echo $systemConfig > /var/lib/arkheon/.canary
+          # Avoid error when the service is first activated
+          if [ -d /var/lib/arkheon ]; then
+            echo $systemConfig > /var/lib/arkheon/.canary
+          fi
         '';
 
         supportsDryActivation = true;
