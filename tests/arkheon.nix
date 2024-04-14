@@ -1,21 +1,20 @@
-{ lib, pkgs, ... }: {
+_: {
   name = "arkheon";
 
-  nodes.machine = { config, pkgs, ... }: {
-    imports = [ ../module.nix ];
-    nixpkgs.overlays = [
-      (import ../overlay.nix)
-    ];
-    services.arkheon = {
-      enable = true;
-      domain = "arkheon";
+  nodes.machine =
+    { config, pkgs, ... }:
+    {
+      imports = [ ../module.nix ];
+      nixpkgs.overlays = [ (import ../overlay.nix) ];
+      services.arkheon = {
+        enable = true;
+        domain = "arkheon";
+      };
+      networking.firewall.allowedTCPPorts = [ 80 ];
+      #specialisation.updatedMachine.configuration.environment.systemPackages = [ pkgs.hello ];
     };
-    networking.firewall.allowedTCPPorts = [ 80 ];
-    #specialisation.updatedMachine.configuration.environment.systemPackages = [ pkgs.hello ];
-  };
 
-  testScript = let
-  in ''
+  testScript = ''
     start_all()
     machine.wait_for_unit("arkheon.service")
     machine.wait_for_unit("network.target")
