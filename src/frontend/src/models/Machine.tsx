@@ -5,7 +5,7 @@ import { get } from "../utils";
 import { FaSolidChevronDown, FaSolidChevronUp } from "solid-icons/fa";
 
 export const Machine: Component<Machine> = (props) => {
-  const [isExpanded, setExpanded] = createSignal(true);
+  const [isExpanded, setExpanded] = createSignal(false);
   const [deployments, setDeployments] = createSignal([]);
 
   const toggle = () => setExpanded((e) => !e);
