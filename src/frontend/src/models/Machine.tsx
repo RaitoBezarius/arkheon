@@ -5,7 +5,7 @@ import { date, get } from "../utils";
 import { FaSolidChevronDown, FaSolidChevronUp } from "solid-icons/fa";
 
 export const Machine: Component<Machine> = (props) => {
-  const [isExpanded, setExpanded] = createSignal(false);
+  const [isExpanded, setExpanded] = createSignal(true);
   const [deployments, setDeployments] = createSignal<Deployment[]>([]);
 
   const toggle = () => setExpanded((e) => !e);
@@ -39,7 +39,7 @@ export const Machine: Component<Machine> = (props) => {
         fallback={<p>No deployment available yet.</p>}
       >
         <Collapse value={isExpanded()}>
-          <div class="table-container">
+          <div class="table-container deployments mt-2">
             <table class="table is-narrow is-fullwidth is-striped mt-3">
               <tbody class="is-size-7">
                 <For each={deployments()}>
