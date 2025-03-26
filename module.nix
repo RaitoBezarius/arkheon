@@ -134,19 +134,8 @@ in
   config = mkMerge [
     (mkIf cfg.enable {
       services = {
-        postgresql = mkIf (lib.hasPrefix "postgresql" cfg.settings.SQLALCHEMY_DATABASE_URL) {
-          enable = true;
-          ensureUsers = [
-            {
-              name = "arkheon";
-              ensureDBOwnership = true;
-            }
-          ];
-          ensureDatabases = [ "arkheon" ];
-        };
-
         arkheon = {
-          settings.SQLALCHEMY_DATABASE_URL = mkDefault "postgresql+psycopg2:///arkheon?host=/run/postgresql";
+          settings.SQLALCHEMY_DATABASE_URL = mkDefault "sqlite:////var/lib/arkheon/sqlite.db";
 
           nginx.locations = {
             "/" = {
@@ -172,13 +161,12 @@ in
         serviceConfig = {
           User = "arkheon";
           DynamicUser = true;
+          StateDirectory="arkheon";
           EnvironmentFile = optional (cfg.envFile != null) cfg.envFile;
         };
         wantedBy = [ "multi-user.target" ];
-        wants = [ "postgresql.target" ];
         after = [
           "network.target"
-          "postgresql.service"
         ];
       };
     })
