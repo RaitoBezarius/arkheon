@@ -1,27 +1,20 @@
 {
   sources ? import ./npins,
-  pkgs ? import sources.nixpkgs { },
+  overlay ? import ./nix/overlay.nix,
+  pkgs ? import sources.nixpkgs {
+    overlays = [ overlay ];
+  },
 }:
 
 {
-  frontend = pkgs.callPackage ./frontend.nix { };
-
-  backend = pkgs.python3.pkgs.callPackage ./backend.nix { };
-
   tests = import ./tests { inherit sources pkgs; };
 
-  shell = pkgs.mkShell {
+  overlay = import ./nix/overlay.nix;
+
+  devShell = pkgs.mkShell {
     buildInputs = [
-      (pkgs.python3.withPackages (
-        ps: [
-          ps.fastapi
-          ps.uvicorn
-          ps.sqlalchemy
-          ps.pydantic
-          ps.pydantic-settings
-          ps.httpx
-        ]
-      ))
+      (pkgs.python3.withPackages (ps: [ ps.arkheon ] ++ ps.fastapi.optional-dependencies.standard))
+
       pkgs.jq
       pkgs.nodejs
     ];

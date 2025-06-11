@@ -1,16 +1,28 @@
 {
   lib,
   buildPythonPackage,
-  hatchling,
-  pydantic,
-  fastapi,
-  sqlalchemy,
-  httpx,
-  pydantic-settings,
   callPackage,
+
+  # build-system
+  hatchling,
+
+  # dependencies
+  fastapi,
+  httpx,
+  loadcredential,
+  pydantic,
+  pydantic-settings,
+  sqlalchemy,
 }:
 
 let
+  inherit (lib.fileset)
+    fileFilter
+    gitTracked
+    intersection
+    toSource
+    ;
+
   removeFilesets = lib.foldl lib.fileset.difference;
 in
 
@@ -19,31 +31,26 @@ buildPythonPackage {
   version = "unstable-2024-02-27";
   pyproject = true;
 
-  src =
-    with lib.fileset;
-    toSource {
-      root = ./.;
-      fileset =
-        removeFilesets (intersection (gitTracked ./.) (fileFilter (file: !file.hasExt "nix") ./.))
-          [
-            ./src/frontend
-            ./tests
-          ];
-    };
+  src = toSource rec {
+    root = ../../..;
+    fileset =
+      removeFilesets (intersection (gitTracked root) (fileFilter (file: !file.hasExt "nix") root))
+        [
+          (root + "/src/frontend")
+          (root + "/tests")
+        ];
+  };
 
   nativeBuildInputs = [ hatchling ];
 
   propagatedBuildInputs = [
     fastapi
     httpx
+    loadcredential
     pydantic
     pydantic-settings
     sqlalchemy
   ];
-
-  postPatch = ''
-    substituteInPlace src/api/db.py --replace 'connect_args={"check_same_thread": False}' ""
-  '';
 
   passthru.frontend = callPackage ./frontend.nix { };
 
