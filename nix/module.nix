@@ -178,9 +178,11 @@ in
       system.activationScripts.arkheon-record = {
         text = ''
           # Avoid error when the service is first activated
-          if [ -d /var/lib/arkheon-record/.canary ]; then
-            echo $systemConfig > /var/lib/arkheon-record/.canary
+          if [ ! -d /var/lib/arkheon-record ]; then
+            mkdir /var/lib/arkheon-record
           fi
+
+          echo $systemConfig > /var/lib/arkheon-record/.canary
         '';
 
         supportsDryActivation = false;
@@ -194,6 +196,7 @@ in
           after = [ "network-online.target" ];
 
           path = [
+            pkgs.coreutils
             pkgs.curl
             pkgs.nettools
             pkgs.nix
@@ -205,6 +208,9 @@ in
           };
 
           script = ''
+            # Sleep a few seconds to ensure better odds for contacting the server
+            sleep 15
+
             SYSTEM=$(cat /var/lib/arkheon-record/.canary)
 
             MACHINE=${if cfg.record.identifier != null then cfg.record.identifier else "$(hostname)"}
@@ -227,7 +233,6 @@ in
 
           serviceConfig = {
             LoadCredential = optional (cfg.record.tokenFile != null) "token:${cfg.record.tokenFile}";
-            RuntimeDirectory = "arkheon-record";
             Restart = "on-failure";
             RestartSec = "5s";
             Type = "oneshot";
