@@ -5,11 +5,11 @@ $dark: rgb(46, 46, 46);
 
 /*! bulma.io v1.0.0 | MIT License | github.com/jgthms/bulma */
 @use "sass" with (
-  $primary: #F39E60,
-  $success: #CCE0AC,
-  $warning: #F0EAAC,
-  $danger: #FF8A8A,
-  $info: #D2E0FB,
+  $primary: #f39e60,
+  $success: #cce0ac,
+  $warning: #f0eaac,
+  $danger: #ff8a8a,
+  $info: #d2e0fb,
   $link: rgb(72, 95, 199),
   $dark: $dark
 );
@@ -35,7 +35,7 @@ label.diff {
 }
 
 td.date {
-  width: 13.25em;
+  width: 15em;
 }
 
 body {
@@ -49,4 +49,18 @@ body {
 .deployments {
   max-height: 15em;
   overflow-y: scroll;
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible Mono";
+  src: url("../assets/fonts/AtkinsonHyperlegibleMono-Regular.woff2")
+    format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  src: url("../assets/fonts/AtkinsonHyperlegibleNext-Regular.woff2")
+    format("woff2");
+  font-display: swap;
 }

@@ -19,7 +19,6 @@ export const get = async (
     .then((d) => {
       if (!d.ok) throw new Error(`API returned status ${d.status}`);
 
-      console.log(d);
       return d.json();
     })
     .then(f)

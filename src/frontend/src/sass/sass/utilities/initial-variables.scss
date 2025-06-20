@@ -33,10 +33,12 @@ $red: hsl(348, 100%, 70%) !default;
 
 // Typography
 
-$family-sans-serif: "Inter", "SF Pro", "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
-  "Helvetica Neue", "Helvetica", "Arial", sans-serif !default;
-$family-monospace: "Inconsolata", "Hack", "SF Mono", "Roboto Mono",
-  "Source Code Pro", "Ubuntu Mono", monospace !default;
+$family-sans-serif:
+  Atkinson Hyperlegible Next,
+  sans-serif !default;
+$family-monospace:
+  Atkinson Hyperlegible Mono,
+  monospace !default;
 $render-mode: optimizeLegibility !default;
 
 $size-1: 3rem !default;

@@ -46,7 +46,7 @@ export const Machine: Component<Machine> = (props) => {
       >
         <Collapse value={isExpanded()}>
           <div class="table-container deployments mt-2">
-            <table class="table is-narrow is-fullwidth is-striped mt-3">
+            <table class="table is-hoverable is-fullwidth is-striped mt-3">
               <tbody class="is-size-7">
                 <For each={deployments()}>
                   {(d: Deployment) => <Deployment {...d} />}
