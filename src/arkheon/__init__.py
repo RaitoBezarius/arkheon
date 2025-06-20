@@ -15,6 +15,8 @@ from arkheon.database import get_db, sessionmanager
 from arkheon.models import WebHook
 from arkheon.schemas import WebHookConfig
 
+__VERSION__ = "0.1.0"
+
 logger = logging.getLogger(__name__)
 
 
@@ -92,3 +94,9 @@ def init_app(init_db: bool = True):
 
 
 app = init_app()
+
+
+__all__ = [
+    "__VERSION__",
+    "app",
+]

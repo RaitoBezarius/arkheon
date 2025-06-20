@@ -1,16 +1,17 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "arkheon"
-version = "0.1.0"
+dynamic = ["version"]
 authors = [
   { name="Tom Hubrecht", email="tom@hubrecht.ovh" },
   { name="Raito Bezarius", email="masterancpp@gmail.com" },
   { name="sinavir", email="sinavir@sinavir.fr" },
 ]
 description = "Track your Nix closures over time"
+license = {file = "LICENSE"}
 readme = "README.md"
 requires-python = ">=3.11"
 classifiers = [
@@ -28,8 +29,8 @@ dependencies = [
 Homepage = "https://github.com/RaitoBezarius/arkheon"
 Issues = "https://github.com/RaitoBezarius/arkheon/issues"
 
-[tool.hatch.build.targets.wheel]
-only-include = [ "src/arkheon" ]
-
 [tool.isort]
 profile = "black"
+
+[tool.setuptools.dynamic]
+version = {attr = "arkheon.__VERSION__"}
