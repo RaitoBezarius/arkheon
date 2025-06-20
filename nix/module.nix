@@ -213,7 +213,7 @@ in
 
             SYSTEM=$(cat /var/lib/arkheon-record/.canary)
 
-            MACHINE=${if cfg.record.identifier != null then cfg.record.identifier else "$(hostname)"}
+            MACHINE="${if cfg.record.identifier != null then cfg.record.identifier else "$(hostname)"}"
 
             TOP_LEVEL=$(nix --extra-experimental-features nix-command path-info "$SYSTEM")
 
@@ -228,7 +228,7 @@ in
               -H "X-Operator: $ARKHEON_OPERATOR" \
               -H "X-TopLevel: $TOP_LEVEL" \
               --data @- \
-              "$ARKHEON_URL/api/v1/record/$MACHINE"
+              "$ARKHEON_URL/api/v1/machine/$MACHINE/deployment"
           '';
 
           serviceConfig = {
