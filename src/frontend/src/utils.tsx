@@ -31,7 +31,7 @@ export const date = (s: string) =>
   new Intl.DateTimeFormat("en-GB", {
     timeStyle: "medium",
     dateStyle: "short",
-  }).format(new Date(s));
+  }).format(new Date(`${s}Z`));
 
 export const size = (bytes: number): [string, string] => {
   const range = Math.trunc(Math.log2(Math.abs(bytes)) / 10);
