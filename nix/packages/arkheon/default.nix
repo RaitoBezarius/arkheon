@@ -7,11 +7,12 @@
   hatchling,
 
   # dependencies
+  aiosqlite,
+  alembic,
   fastapi,
   httpx,
   loadcredential,
   pydantic,
-  pydantic-settings,
   sqlalchemy,
 }:
 
@@ -41,14 +42,15 @@ buildPythonPackage {
         ];
   };
 
-  nativeBuildInputs = [ hatchling ];
+  build-system = [ hatchling ];
 
-  propagatedBuildInputs = [
+  dependencies = [
+    aiosqlite
+    alembic
     fastapi
     httpx
     loadcredential
     pydantic
-    pydantic-settings
     sqlalchemy
   ];
 

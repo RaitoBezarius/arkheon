@@ -3,6 +3,7 @@ import { Collapse } from "solid-collapse";
 import { Deployment } from "./Deployment.tsx";
 import { date, get } from "../utils";
 import { FaSolidChevronDown, FaSolidChevronUp } from "solid-icons/fa";
+import { URLS } from "../urls";
 
 export const Machine: Component<Machine> = (props) => {
   const [isExpanded, setExpanded] = createSignal(true);
@@ -11,7 +12,10 @@ export const Machine: Component<Machine> = (props) => {
   const toggle = () => setExpanded((e) => !e);
 
   createEffect(() => {
-    get(`deployments/${props.identifier}`, setDeployments);
+    get(URLS.get_machine_deployments, setDeployments, [
+      "machine",
+      props.identifier,
+    ]);
   });
 
   return (
@@ -30,7 +34,9 @@ export const Machine: Component<Machine> = (props) => {
           {props.identifier} [{deployments().length}]
         </b>
         <Show when={deployments().length > 0}>
-          <span class="tag is-warning ml-5">{date(deployments()[0].created_at)}</span>
+          <span class="tag is-warning ml-5">
+            {date(deployments()[0].created_at)}
+          </span>
         </Show>
       </h3>
 

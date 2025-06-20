@@ -1,6 +1,13 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
+
+
+class Message(BaseModel):
+    message: str
+
+    class Config:
+        from_attributes = True
 
 
 class StorePathBase(BaseModel):
@@ -38,3 +45,26 @@ class DeploymentDTO(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class PackageDiff(BaseModel):
+    new: tuple[list[str | None], int]
+    old: tuple[list[str | None], int]
+
+
+class SizeDiff(BaseModel):
+    new: int
+    old: int
+
+
+class DeploymentDiff(BaseModel):
+    changed: dict[str, PackageDiff]
+    removed: dict[str, tuple[list[str | None], int]]
+    added: dict[str, tuple[list[str | None], int]]
+    sizes: SizeDiff
+    deployment: DeploymentDTO
+
+
+class WebHookConfig(BaseModel):
+    machine: str
+    endpoint: HttpUrl

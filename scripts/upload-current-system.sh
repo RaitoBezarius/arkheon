@@ -7,4 +7,4 @@ nix path-info --closure-size -rsh /run/current-system --json | curl -X POST \
 	-H "X-Operator: $ARKHEON_OPERATOR" \
 	-H "X-TopLevel: $TOP_LEVEL" \
 	--data @- \
-	"http://localhost:8000/record/$(hostname)"
+	"http://localhost:8000/api/v1/machine/$(hostname)/deployment"

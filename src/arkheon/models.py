@@ -1,11 +1,24 @@
 import datetime
+import logging
 from typing import List
 
-from sqlalchemy import (Column, DateTime, ForeignKey, Integer, Table,
-                        UniqueConstraint, func)
+import httpx
+from sqlalchemy import (
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Table,
+    UniqueConstraint,
+    func,
+    select,
+)
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from .db import Base
+from arkheon.database import Base
+
+logger = logging.getLogger(__name__)
 
 closures_table = Table(
     "store_paths_closures",
@@ -90,7 +103,15 @@ class Deployment(Base):
         back_populates="associated_deployments",
         cascade="merge",
     )
-    toplevel: Mapped[str] = mapped_column(unique=True, index=True)
+    toplevel: Mapped[str] = mapped_column(index=True)
+
+    async def closure_size(self, db: AsyncSession) -> int:
+        return (
+            (await db.execute(select(StorePath).where(StorePath.path == self.toplevel)))
+            .scalars()
+            .one()
+            .closure_size
+        )
 
 
 class WebHook(Base):
@@ -109,3 +130,6 @@ class Machine(Base):
     identifier: Mapped[str] = mapped_column(unique=True, index=True)
     deployments: Mapped[List[Deployment]] = relationship()
     webhooks: Mapped[List[WebHook]] = relationship()
+
+    def __str__(self):
+        return self.identifier

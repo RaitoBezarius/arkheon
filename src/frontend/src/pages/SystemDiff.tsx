@@ -3,6 +3,7 @@ import { useParams } from "@solidjs/router";
 import { date, get, sortVersions } from "../utils";
 import { Size } from "../components/Size";
 import { PackageList } from "../models/PackageList";
+import { URLS } from "../urls";
 
 export default function Diff() {
   const [diff, setDiff] = createSignal<Diff>();
@@ -36,15 +37,19 @@ export default function Diff() {
   };
 
   createEffect(() => {
-    get(`diff-latest?deployment_id=${params.id}`, (d: RawDiff) => {
-      setDiff({
-        added: mkPackages(d.added),
-        removed: mkPackages(d.removed),
-        changed: mkPackages(d.changed),
-        sizes: d.sizes,
-        deployment: d.deployment,
-      });
-    });
+    get(
+      URLS.get_deployment_diff,
+      (d: RawDiff) => {
+        setDiff({
+          added: mkPackages(d.added),
+          removed: mkPackages(d.removed),
+          changed: mkPackages(d.changed),
+          sizes: d.sizes,
+          deployment: d.deployment,
+        });
+      },
+      ["deployment", params.id],
+    );
   });
 
   return (

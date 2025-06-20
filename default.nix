@@ -20,7 +20,8 @@
     ];
 
     shellHook = ''
-      export SQLALCHEMY_DATABASE_URL="sqlite:///$(git rev-parse --show-toplevel)/arkheon.db"
+      export ARKHEON_DATABASE_URL="sqlite+aiosqlite:///$(git rev-parse --show-toplevel)/arkheon.db"
+      export ARKHEON_OPERATOR=$(whoami)
     '';
   };
 }

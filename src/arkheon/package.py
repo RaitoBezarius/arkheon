@@ -240,7 +240,7 @@ def parse_pname_version(path: str) -> Tuple[str, str]:
 
 def closure_paths_to_map(
     paths: List[models.StorePath],
-) -> Dict[str, Tuple[List[str], int]]:
+) -> dict[str, tuple[list[str | None], int]]:
     result = {}
 
     for spath in paths:
