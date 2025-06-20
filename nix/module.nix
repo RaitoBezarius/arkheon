@@ -60,6 +60,14 @@ in
         description = "URL of the Arkheon server.";
         example = "http://127.0.0.1:8000";
       };
+
+      identifier = mkOption {
+        type = nullOr str;
+        default = null;
+        description = ''
+          Set the identifier of the machine so as to not rely on the hostname.
+        '';
+      };
     };
 
     workers = mkOption {
@@ -199,6 +207,8 @@ in
           script = ''
             SYSTEM=$(cat /var/lib/arkheon-record/.canary)
 
+            MACHINE=${if cfg.record.identifier != null then cfg.record.identifier else "$(hostname)"}
+
             TOP_LEVEL=$(nix --extra-experimental-features nix-command path-info "$SYSTEM")
 
             if [ -f "$CREDENTIALS_DIRECTORY/token" ]; then
@@ -212,7 +222,7 @@ in
               -H "X-Operator: $ARKHEON_OPERATOR" \
               -H "X-TopLevel: $TOP_LEVEL" \
               --data @- \
-              "$ARKHEON_URL/api/v1/record/$(hostname)"
+              "$ARKHEON_URL/api/v1/record/$MACHINE"
           '';
 
           serviceConfig = {
