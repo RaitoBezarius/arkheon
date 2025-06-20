@@ -9,6 +9,7 @@
 let
   inherit (lib)
     getExe'
+    mapAttrsToList
     mkDefault
     mkEnableOption
     mkIf
@@ -77,10 +78,12 @@ in
       description = "Settings to pass as environment variables";
     };
 
-    envFile = mkOption {
-      type = nullOr path;
-      description = "Environment file to append to settings.";
-      default = null;
+    secrets = mkOption {
+      type = attrsOf path;
+      default = { };
+      description = ''
+        Secrets that will be passed to Arkheon via LoadCredential.
+      '';
     };
 
     domain = mkOption {
@@ -100,10 +103,7 @@ in
   config = mkMerge [
     (mkIf cfg.enable {
       services = {
-        arkheon = {
-          settings.SQLALCHEMY_DATABASE_URL = mkDefault "sqlite+aiosqlite:///var/lib/arkheon/arkheon.db";
-
-        };
+        arkheon.settings.SQLALCHEMY_DATABASE_URL = mkDefault "sqlite+aiosqlite:///var/lib/arkheon/arkheon.db";
 
         nginx = mkIf cfg.configureNginx {
           enable = true;
@@ -144,7 +144,6 @@ in
         serviceConfig = {
           User = "arkheon";
           DynamicUser = true;
-          EnvironmentFile = optional (cfg.envFile != null) cfg.envFile;
           ExecStart = escapeSystemdExecArgs [
             (getExe' cfg.package.pythonEnv "gunicorn")
             "--workers"
@@ -161,6 +160,7 @@ in
           ExecReload = "${getExe' pkgs.coreutils "kill"} -s HUP $MAINPID";
           KillMode = "mixed";
           Type = "notify";
+          LoadCredential = mapAttrsToList (name: path: "${name}:${path}") cfg.secrets;
         };
         wantedBy = [ "multi-user.target" ];
         after = [ "network.target" ];
