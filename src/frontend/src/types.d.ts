@@ -31,6 +31,7 @@ interface Diff {
   changed: Package[];
   deployment: Deployment;
   sizes: { old: number; new: number };
+  machine: string;
 }
 
 // Raw data coming from the API
@@ -46,4 +47,5 @@ interface RawDiff {
   changed: RawPackages;
   sizes: { old: number; new: number };
   deployment: Deployment;
+  machine: string;
 }

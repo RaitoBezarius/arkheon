@@ -63,6 +63,7 @@ class DeploymentDiff(BaseModel):
     added: dict[str, tuple[list[str | None], int]]
     sizes: SizeDiff
     deployment: DeploymentDTO
+    machine: str
 
 
 class WebHookConfig(BaseModel):

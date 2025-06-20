@@ -46,6 +46,7 @@ export default function Diff() {
           changed: mkPackages(d.changed),
           sizes: d.sizes,
           deployment: d.deployment,
+          machine: d.machine,
         });
       },
       ["deployment", params.id],
@@ -56,19 +57,9 @@ export default function Diff() {
     <Show when={diff()}>
       {(d) => (
         <>
-          <div class="block">
-            <div class="field is-horizontal">
-              <label class="label diff">New closure size :</label>
-              <Size bytes={d().sizes.new} />
-            </div>
-
-            <div class="field is-horizontal">
-              <label class="label diff">Old closure size :</label>
-              <Size bytes={d().sizes.old} />
-            </div>
-
-            <div class="field is-horizontal">
-              <label class="label diff">Applied on :</label>
+          <h1 class="title">
+            {d().machine}
+            <span class="is-pulled-right">
               <div class="tags has-addons">
                 <span class="tag is-family-monospace">
                   {date(d().deployment.created_at)}
@@ -78,6 +69,20 @@ export default function Diff() {
                   by&nbsp;<b>{d().deployment.operator_id}</b>
                 </span>
               </div>
+            </span>
+          </h1>
+
+          <hr />
+
+          <div class="block">
+            <div class="field is-horizontal">
+              <label class="label diff">New closure size :</label>
+              <Size bytes={d().sizes.new} />
+            </div>
+
+            <div class="field is-horizontal">
+              <label class="label diff">Size delta :</label>
+              <Size bytes={d().sizes.new - d().sizes.old} colored signed />
             </div>
           </div>
 

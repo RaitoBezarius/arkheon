@@ -114,4 +114,5 @@ async def read_deployment_diff(
         added={pname: new_pkgs[pname] for pname in pkgs_added},
         sizes=SizeDiff(new=new_size, old=old_size),
         deployment=DeploymentDTO.model_validate(new),
+        machine=new.target_machine.identifier,
     )
