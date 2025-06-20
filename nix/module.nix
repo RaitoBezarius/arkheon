@@ -116,7 +116,7 @@ in
               tryFiles = "$uri /index.html";
             };
 
-            "/api/".proxyPass = "http://unix:/run/arkheon.sock";
+            "/api/".proxyPass = "http://unix:/run/arkheon/.sock";
           };
         };
       };
@@ -126,7 +126,7 @@ in
         wantedBy = [ "sockets.target" ];
 
         socketConfig = {
-          ListenStream = "/run/arkheon.sock";
+          ListenStream = "/run/arkheon/.sock";
           SocketMode = "600";
           SocketUser = config.services.nginx.user;
         };
@@ -149,12 +149,11 @@ in
             "--workers"
             cfg.workers
             "--bind"
-            "unix:/run/arkheon.sock"
+            "unix:/run/arkheon/.sock"
             "--worker-class"
             "uvicorn.workers.UvicornWorker"
             "arkheon:app"
           ];
-          RuntimeDirectory = "arkheon";
           StateDirectory = "arkheon";
           WorkingDirectory = "/var/lib/arkheon";
           ExecReload = "${getExe' pkgs.coreutils "kill"} -s HUP $MAINPID";
