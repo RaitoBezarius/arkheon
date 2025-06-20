@@ -72,7 +72,7 @@ async def post_machine_deployment(
     x_token: Annotated[str | None, Header()] = None,
     db: AsyncSession = Depends(get_db),
 ) -> Any:
-    if settings.token is not None and x_token != settings.token:
+    if settings.TOKEN is not None and x_token != settings.TOKEN:
         response.status_code = status.HTTP_403_FORBIDDEN
         return {"message": "Incorrect token given."}
 
