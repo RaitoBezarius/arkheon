@@ -78,12 +78,22 @@ in
       '';
     };
 
-    settings = mkOption {
+    environment = mkOption {
       type = submodule {
         freeformType = attrsOf str;
-        options.SQLALCHEMY_DATABASE_URL = mkOption { description = "Database url"; };
+
+        options = {
+          ARKHEON_DATABASE_URL = mkOption {
+            description = ''
+              URI of the Sqlite database.
+            '';
+          };
+        };
       };
-      description = "Settings to pass as environment variables";
+
+      description = ''
+        Settings to pass as environment variables
+      '';
     };
 
     secrets = mkOption {
@@ -96,7 +106,9 @@ in
 
     domain = mkOption {
       type = str;
-      description = "Hostname for reverse proxy config. To configure";
+      description = ''
+        Domain of the Arkheon server.
+      '';
     };
 
     configureNginx = mkOption {
@@ -111,7 +123,7 @@ in
   config = mkMerge [
     (mkIf cfg.enable {
       services = {
-        arkheon.settings.SQLALCHEMY_DATABASE_URL = mkDefault "sqlite+aiosqlite:///var/lib/arkheon/arkheon.db";
+        arkheon.environment.ARKHEON_DATABASE_URL = mkDefault "sqlite+aiosqlite:////var/lib/arkheon/arkheon.db";
 
         nginx = mkIf cfg.configureNginx {
           enable = true;
@@ -141,7 +153,13 @@ in
       };
 
       systemd.services.arkheon = {
-        environment = cfg.settings;
+        description = "Arkheon, a recorder of NixOS deployments";
+
+        requires = [ "arkheon.socket" ];
+        wantedBy = [ "multi-user.target" ];
+
+        inherit (cfg) environment;
+
         path = [ cfg.package.pythonEnv ];
 
         preStart = ''
@@ -150,8 +168,6 @@ in
         '';
 
         serviceConfig = {
-          User = "arkheon";
-          DynamicUser = true;
           ExecStart = escapeSystemdExecArgs [
             (getExe' cfg.package.pythonEnv "gunicorn")
             "--workers"
@@ -162,15 +178,51 @@ in
             "uvicorn.workers.UvicornWorker"
             "arkheon:app"
           ];
-          StateDirectory = "arkheon";
-          WorkingDirectory = "/var/lib/arkheon";
           ExecReload = "${getExe' pkgs.coreutils "kill"} -s HUP $MAINPID";
           KillMode = "mixed";
-          Type = "notify";
           LoadCredential = mapAttrsToList (name: path: "${name}:${path}") cfg.secrets;
+          StateDirectory = "arkheon";
+          Type = "notify";
+          WorkingDirectory = "/var/lib/arkheon";
+
+          # Hardening
+          CapabilityBoundingSet = "";
+          DynamicUser = true;
+          LockPersonality = true;
+          MemoryDenyWriteExecute = true;
+          PrivateDevices = true;
+          PrivateNetwork = true;
+          PrivateUsers = true;
+          ProcSubset = "pid";
+          ProtectClock = true;
+          ProtectControlGroups = true;
+          ProtectHome = true;
+          ProtectHostname = true;
+          ProtectKernelLogs = true;
+          ProtectKernelModules = true;
+          ProtectKernelTunables = true;
+          ProtectProc = "invisible";
+          RestrictAddressFamilies = [ "AF_UNIX" ];
+          RestrictNamespaces = true;
+          RestrictRealtime = true;
+          SystemCallArchitectures = "native";
+          SystemCallFilter = [
+            "~@clock"
+            "~@cpu-emulation"
+            "~@module"
+            "~@mount"
+            "~@obsolete"
+            "~@raw-io"
+            "~@reboot"
+            "~@swap"
+            "~@resources"
+            "~@privileged"
+            "~capset"
+            "~setdomainname"
+            "~sethostname"
+          ];
+          UMask = "0077";
         };
-        wantedBy = [ "multi-user.target" ];
-        after = [ "network.target" ];
       };
     })
 
@@ -207,29 +259,30 @@ in
             ARKHEON_URL = cfg.record.url;
           };
 
-          script = ''
-            # Sleep a few seconds to ensure better odds for contacting the server
-            sleep 15
+          script = # bash
+            ''
+              # Sleep a few seconds to ensure better odds for contacting the server
+              sleep 15
 
-            SYSTEM=$(cat /var/lib/arkheon-record/.canary)
+              SYSTEM=$(cat /var/lib/arkheon-record/.canary)
 
-            MACHINE="${if cfg.record.identifier != null then cfg.record.identifier else "$(hostname)"}"
+              MACHINE="${if cfg.record.identifier != null then cfg.record.identifier else "$(hostname)"}"
 
-            TOP_LEVEL=$(nix --extra-experimental-features nix-command path-info "$SYSTEM")
+              TOP_LEVEL=$(nix --extra-experimental-features nix-command path-info "$SYSTEM")
 
-            if [ -f "$CREDENTIALS_DIRECTORY/token" ]; then
-              TOKEN=$(cat "$CREDENTIALS_DIRECTORY/token")
-            fi
+              if [ -f "$CREDENTIALS_DIRECTORY/token" ]; then
+                TOKEN=$(cat "$CREDENTIALS_DIRECTORY/token")
+              fi
 
-            nix --extra-experimental-features nix-command \
-              path-info --closure-size -rsh "$SYSTEM" --json | curl -X POST \
-              -H "Content-Type: application/json" \
-              -H "X-Token: $TOKEN" \
-              -H "X-Operator: $ARKHEON_OPERATOR" \
-              -H "X-TopLevel: $TOP_LEVEL" \
-              --data @- \
-              "$ARKHEON_URL/api/v1/machine/$MACHINE/deployment"
-          '';
+              nix --extra-experimental-features nix-command \
+                path-info --closure-size -rsh "$SYSTEM" --json | curl -X POST \
+                -H "Content-Type: application/json" \
+                -H "X-Token: $TOKEN" \
+                -H "X-Operator: $ARKHEON_OPERATOR" \
+                -H "X-TopLevel: $TOP_LEVEL" \
+                --data @- \
+                "$ARKHEON_URL/api/v1/machine/$MACHINE/deployment"
+            '';
 
           serviceConfig = {
             LoadCredential = optional (cfg.record.tokenFile != null) "token:${cfg.record.tokenFile}";
