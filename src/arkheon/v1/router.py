@@ -32,7 +32,9 @@ async def get_machines(
 ) -> Any:
     return [
         {"identifier": m.identifier}
-        for m in (await db.execute(select(Machine))).scalars()
+        for m in (
+            await db.execute(select(Machine).order_by(Machine.identifier))
+        ).scalars()
     ]
 
 
