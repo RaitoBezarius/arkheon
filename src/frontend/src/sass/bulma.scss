@@ -5,7 +5,11 @@ $dark: rgb(46, 46, 46);
 
 /*! bulma.io v1.0.0 | MIT License | github.com/jgthms/bulma */
 @use "sass" with (
-  $primary: #ffcbe1,
+  $primary: #F39E60,
+  $success: #CCE0AC,
+  $warning: #F0EAAC,
+  $danger: #FF8A8A,
+  $info: #D2E0FB,
   $link: rgb(72, 95, 199),
   $dark: $dark
 );

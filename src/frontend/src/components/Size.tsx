@@ -14,7 +14,7 @@ export const Size: Component<{
           <Show when={signed}>{bytes < 0 ? "- " : "+ "}</Show>
           {value}
         </b>
-        <span class="tag is-link is-light u-tag">
+        <span class="tag is-info u-tag">
           <b>{unit}</b>
         </span>
       </span>

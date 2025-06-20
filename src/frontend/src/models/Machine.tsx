@@ -34,7 +34,7 @@ export const Machine: Component<Machine> = (props) => {
           {props.identifier} [{deployments().length}]
         </b>
         <Show when={deployments().length > 0}>
-          <span class="tag is-warning ml-5">
+          <span class="tag is-primary ml-5">
             {date(deployments()[0].created_at)}
           </span>
         </Show>

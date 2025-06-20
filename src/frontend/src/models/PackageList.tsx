@@ -26,7 +26,7 @@ export const PackageList: Component<{
         <button
           class="button is-small"
           classList={{
-            "is-link": sort() === value,
+            "is-info": sort() === value,
             "is-light": sort() !== value,
             // TODO: Add loading indication (using async ?)
             // "is-loading": loading(),
@@ -56,64 +56,66 @@ export const PackageList: Component<{
 
   return (
     <Show when={entries.length > 0}>
-      <section class={`notification p-0 is-${color} block`}>
-        <div class="hero-body py-5">
-          <div class="field has-addons is-pulled-right">
-            <Switch value={Sort.Alphabetical} />
+      <section class={`notification is-${color} block`}>
+        <div class="field has-addons is-pulled-right">
+          <Switch value={Sort.Alphabetical} />
 
-            <Switch value={Sort.Size} />
+          <Switch value={Sort.Size} />
 
-            <p class="control">
-              <button
-                class="button is-small is-light is-link"
-                onclick={() => setPkgs((pkgs) => pkgs.reverse())}
-              >
-                <span class="icon">
-                  <FaSolidArrowsUpDown />
-                </span>
-              </button>
-            </p>
-          </div>
-
-          <h2 class="title">{title}</h2>
-
-          <For each={pkgs()}>
-            {({ name, size, versions, previous = null }) => (
-              <div class="field is-grouped pkg">
-                <Show when={previous} fallback={<Size bytes={size} />}>
-                  <Size bytes={size - previous!.size} signed={true} />
-                </Show>
-
-                <div class="control">
-                  <span class="is-family-monospace is-size-7">
-                    <b>{name}&nbsp;:</b>
-                  </span>
-                </div>
-
-                <Show
-                  when={previous}
-                  fallback={
-                    <For each={versions}>
-                      {(v) => <Version v={v} cls="is-white" />}
-                    </For>
-                  }
-                >
-                  <For each={previous!.versions}>
-                    {(v) => <Version v={v} cls="is-danger is-light has-text-black" />}
-                  </For>
-
-                  <span class="control">
-                    <b class="is-size-7">to</b>
-                  </span>
-
-                  <For each={versions}>
-                    {(v) => <Version v={v} cls="is-success is-light has-text-black" />}
-                  </For>
-                </Show>
-              </div>
-            )}
-          </For>
+          <p class="control">
+            <button
+              class="button is-small is-info"
+              onclick={() => setPkgs((pkgs) => pkgs.reverse())}
+            >
+              <span class="icon">
+                <FaSolidArrowsUpDown />
+              </span>
+            </button>
+          </p>
         </div>
+
+        <h2 class="title">{title}</h2>
+
+        <For each={pkgs()}>
+          {({ name, size, versions, previous = null }) => (
+            <div class="field is-grouped pkg">
+              <Show when={previous} fallback={<Size bytes={size} />}>
+                <Size bytes={size - previous!.size} signed={true} />
+              </Show>
+
+              <div class="control">
+                <span class="is-family-monospace is-size-7">
+                  <b>{name}&nbsp;:</b>
+                </span>
+              </div>
+
+              <Show
+                when={previous}
+                fallback={
+                  <For each={versions}>
+                    {(v) => <Version v={v} cls="is-white" />}
+                  </For>
+                }
+              >
+                <For each={previous!.versions}>
+                  {(v) => (
+                    <Version v={v} cls="is-danger is-light has-text-black" />
+                  )}
+                </For>
+
+                <span class="control">
+                  <b class="is-size-7">to</b>
+                </span>
+
+                <For each={versions}>
+                  {(v) => (
+                    <Version v={v} cls="is-success is-light has-text-black" />
+                  )}
+                </For>
+              </Show>
+            </div>
+          )}
+        </For>
       </section>
     </Show>
   );
