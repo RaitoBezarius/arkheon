@@ -26,7 +26,7 @@ _: {
     with subtest("API has no error"):
         # Api is slow to initialize. We should rely on systemd-notify stuff but hard to implement
         machine.wait_until_succeeds(
-            "curl -sSfL http://[::1]/api/machines"
+            "curl -sSfL http://[::1]/api/v1/machines"
         )
   '';
 }

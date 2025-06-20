@@ -1,7 +1,6 @@
 {
   lib,
   buildNpmPackage,
-  backendUrl ? "@backend@",
 }:
 
 let
@@ -28,7 +27,7 @@ buildNpmPackage {
 
   npmDepsHash = "sha256-PMi2i3Rzu2mZpMxcFIYMGDARiWS3X2Zbk904hZbCiR8=";
 
-  env.VITE_BACKEND_URL = backendUrl;
+  env.VITE_BACKEND_URL = "@backend@";
 
   installPhase = ''
     mv dist $out

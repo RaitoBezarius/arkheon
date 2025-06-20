@@ -2,39 +2,46 @@
   config,
   pkgs,
   lib,
-  modulesPath,
+  utils,
   ...
 }:
 
 let
   inherit (lib)
-    literalExpression
+    getExe'
     mkDefault
     mkEnableOption
     mkIf
     mkMerge
     mkOption
+    mkPackageOption
     optional
     optionalString
     ;
 
   inherit (lib.types)
     attrsOf
+    bool
+    int
     nullOr
-    package
     path
-    port
     str
     submodule
     ;
 
+  inherit (utils) escapeSystemdExecArgs;
+
   cfg = config.services.arkheon;
-  hasSSL = with cfg.nginx; onlySSL || enableSSL || addSSL || forceSSL;
+  hasSSL =
+    with config.services.nginx.virtualHosts.${cfg.domain};
+    onlySSL || enableSSL || addSSL || forceSSL;
 in
 
 {
   options.services.arkheon = {
     enable = mkEnableOption "Arkheon";
+
+    package = mkPackageOption pkgs.python3.pkgs "arkheon" { };
 
     record = {
       enable = mkEnableOption "Arkheon recording of deployments.";
@@ -54,44 +61,19 @@ in
       };
     };
 
-    pythonEnv = mkOption {
-      internal = true;
-      visible = false;
-      type = package;
-      default = pkgs.python3.withPackages (ps: [
-        ps.arkheon
-        ps.daphne
-        ps.psycopg2
-      ]);
-
-      example = literalExpression ''
-        pkgs.python3.withPackages (ps: [
-          ps.arkheon
-          ps.uvicorn
-          ps.gunicorn
-        ]);
+    workers = mkOption {
+      type = int;
+      default = 4;
+      description = ''
+        Number of uvicorn workers to spawn.
       '';
     };
 
-    port = mkOption {
-      type = nullOr port;
-      default = 8007;
-      description = "Port of the server (will be passed using --bind flag)";
-    };
-
-    address = mkOption {
-      type = str;
-      default = "127.0.0.1";
-      description = "The address the server will listen on (will be passed using --host flag)";
-    };
-
     settings = mkOption {
-      type =
-
-        submodule {
-          freeformType = attrsOf str;
-          options.SQLALCHEMY_DATABASE_URL = mkOption { description = "Database url"; };
-        };
+      type = submodule {
+        freeformType = attrsOf str;
+        options.SQLALCHEMY_DATABASE_URL = mkOption { description = "Database url"; };
+      };
       description = "Settings to pass as environment variables";
     };
 
@@ -106,27 +88,11 @@ in
       description = "Hostname for reverse proxy config. To configure";
     };
 
-    nginx = mkOption {
-      type = nullOr (
-        submodule (
-          import (modulesPath + "/services/web-servers/nginx/vhost-options.nix") { inherit config lib; }
-        )
-      );
-      example = literalExpression ''
-        {
-          serverAliases = [
-            "arkheon.''${config.networking.domain}"
-          ];
-          # To enable encryption and let let's encrypt take care of certificate
-          forceSSL = true;
-          enableACME = true;
-        }
-      '';
+    configureNginx = mkOption {
+      type = bool;
+      default = true;
       description = ''
-        With this option, you can customize an nginx virtual host which already
-        has sensible defaults for Arkheon. If enabled, then by default, the
-        serverName is ''${domain}, If this is set to null, no nginx virtualHost
-        will be configured.
+        Whether to configure nginx as a reverse proxy for Arkheon.
       '';
     };
   };
@@ -135,39 +101,69 @@ in
     (mkIf cfg.enable {
       services = {
         arkheon = {
-          settings.SQLALCHEMY_DATABASE_URL = mkDefault "sqlite:////var/lib/arkheon/sqlite.db";
+          settings.SQLALCHEMY_DATABASE_URL = mkDefault "sqlite+aiosqlite:///var/lib/arkheon/arkheon.db";
 
-          nginx.locations = {
-            "/" = {
-              root = pkgs.python3.pkgs.arkheon.frontend.override {
-                backendUrl = "http${optionalString hasSSL "s"}://${cfg.domain}/api";
-              };
-              tryFiles = "$uri /index.html";
-            };
-            "/api/".proxyPass = "http://${cfg.address}:${builtins.toString cfg.port}/";
-          };
         };
 
-        nginx = mkIf (cfg.nginx != null) {
+        nginx = mkIf cfg.configureNginx {
           enable = true;
-          virtualHosts.${cfg.domain} = cfg.nginx;
+          virtualHosts.${cfg.domain}.locations = {
+            "/" = {
+              root = pkgs.runCommand "arkheon-frontend" { nativeBuildInputs = [ pkgs.gnugrep ]; } ''
+                cp -R ${cfg.package.frontend} $out
+                substituteInPlace $(grep -l @backend@ $out/assets/*) --replace-fail @backend@ "http${optionalString hasSSL "s"}://${cfg.domain}/api"
+              '';
+              tryFiles = "$uri /index.html";
+            };
+
+            "/api/".proxyPass = "http://unix:/run/arkheon.sock";
+          };
+        };
+      };
+
+      systemd.sockets.arkheon = {
+        description = "Socket for the Arkheon web server";
+        wantedBy = [ "sockets.target" ];
+
+        socketConfig = {
+          ListenStream = "/run/arkheon.sock";
+          SocketMode = "600";
+          SocketUser = config.services.nginx.user;
         };
       };
 
       systemd.services.arkheon = {
         environment = cfg.settings;
-        path = [ cfg.pythonEnv ];
-        script = "daphne arkheon:app -b ${cfg.address} -p ${builtins.toString cfg.port}";
+        path = [ cfg.package.pythonEnv ];
+
+        preStart = ''
+          cp --no-preserve=mode,ownership ${cfg.package.alembic-ini} alembic.ini
+          alembic upgrade head
+        '';
+
         serviceConfig = {
           User = "arkheon";
           DynamicUser = true;
-          StateDirectory="arkheon";
           EnvironmentFile = optional (cfg.envFile != null) cfg.envFile;
+          ExecStart = escapeSystemdExecArgs [
+            (getExe' cfg.package.pythonEnv "gunicorn")
+            "--workers"
+            cfg.workers
+            "--bind"
+            "unix:/run/arkheon.sock"
+            "--worker-class"
+            "uvicorn.workers.UvicornWorker"
+            "arkheon:app"
+          ];
+          RuntimeDirectory = "arkheon";
+          StateDirectory = "arkheon";
+          WorkingDirectory = "/var/lib/arkheon";
+          ExecReload = "${getExe' pkgs.coreutils "kill"} -s HUP $MAINPID";
+          KillMode = "mixed";
+          Type = "notify";
         };
         wantedBy = [ "multi-user.target" ];
-        after = [
-          "network.target"
-        ];
+        after = [ "network.target" ];
       };
     })
 
@@ -175,17 +171,15 @@ in
       system.activationScripts.arkheon-record = {
         text = ''
           # Avoid error when the service is first activated
-          if [ -d /var/lib/arkheon ]; then
-            echo $systemConfig > /var/lib/arkheon/.canary
+          if [ -d /var/lib/arkheon-record/.canary ]; then
+            echo $systemConfig > /var/lib/arkheon-record/.canary
           fi
         '';
 
-        supportsDryActivation = true;
+        supportsDryActivation = false;
       };
 
       systemd = {
-        tmpfiles.rules = [ "d /var/lib/arkheon 0755 root root -" ];
-
         services.arkheon-record = {
           description = "Arkheon recording service.";
 
@@ -204,7 +198,7 @@ in
           };
 
           script = ''
-            SYSTEM=$(cat /var/lib/arkheon/.canary)
+            SYSTEM=$(cat /var/lib/arkheon-record/.canary)
 
             TOP_LEVEL=$(nix --extra-experimental-features nix-command path-info "$SYSTEM")
 
@@ -219,11 +213,12 @@ in
               -H "X-Operator: $ARKHEON_OPERATOR" \
               -H "X-TopLevel: $TOP_LEVEL" \
               --data @- \
-              "$ARKHEON_URL/api/record/$(hostname)"
+              "$ARKHEON_URL/api/v1/record/$(hostname)"
           '';
 
           serviceConfig = {
             LoadCredential = optional (cfg.record.tokenFile != null) "token:${cfg.record.tokenFile}";
+            RuntimeDirectory = "arkheon-record";
             Restart = "on-failure";
             RestartSec = "5s";
             Type = "oneshot";
@@ -234,7 +229,7 @@ in
           wantedBy = [ "multi-user.target" ];
 
           pathConfig = {
-            PathModified = "/var/lib/arkheon/.canary";
+            PathModified = "/var/lib/arkheon-record/.canary";
             Unit = "arkheon-record.service";
           };
         };
