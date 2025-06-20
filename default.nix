@@ -23,6 +23,7 @@
 
       pkgs.jq
       pkgs.nodejs
+      pkgs.dart-sass
     ];
 
     env.VITE_BACKEND_URL = "http://localhost:8000/api";

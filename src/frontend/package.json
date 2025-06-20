@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@solidjs/router": "^0.12.4",
+    "sass-embedded": "^1.89.2",
     "solid-collapse": "^1.1.0",
     "solid-icons": "^1.1.0",
     "solid-js": "^1.8.14"

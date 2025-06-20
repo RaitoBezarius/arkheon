@@ -25,7 +25,7 @@ buildNpmPackage {
 
   sourceRoot = "source/src/frontend";
 
-  npmDepsHash = "sha256-PMi2i3Rzu2mZpMxcFIYMGDARiWS3X2Zbk904hZbCiR8=";
+  npmDepsHash = "sha256-scDMTiTqHcLV7ASMCaBA8XT8haLuM8EcmG4k0wUeYYo=";
 
   env.VITE_BACKEND_URL = "@backend@";
 
