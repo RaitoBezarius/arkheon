@@ -4,6 +4,7 @@ type Deployment = {
   toplevel: string;
   operator_id: string;
   target_machine_id: string;
+  size: number;
 };
 
 interface Machine {

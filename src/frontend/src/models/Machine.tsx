@@ -29,14 +29,17 @@ export const Machine: Component<Machine> = (props) => {
         </span>
       </button>
 
-      <h3>
+      <h3 classList={{ "mb-2": isExpanded() }}>
         <b>
           {props.identifier} [{deployments().length}]
         </b>
         <Show when={deployments().length > 0}>
-          <span class="tag is-primary ml-5">
+          <a
+            href={`/diff/${deployments()[0].id}`}
+            class="tag is-primary ml-5 is-family-monospace"
+          >
             {date(deployments()[0].created_at)}
-          </span>
+          </a>
         </Show>
       </h3>
 
@@ -45,7 +48,7 @@ export const Machine: Component<Machine> = (props) => {
         fallback={<p>No deployment available yet.</p>}
       >
         <Collapse value={isExpanded()}>
-          <div class="table-container deployments mt-2">
+          <div class="table-container deployments">
             <table class="table is-hoverable is-fullwidth is-striped mt-3">
               <tbody class="is-size-7">
                 <For each={deployments()}>
