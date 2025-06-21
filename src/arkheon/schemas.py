@@ -57,6 +57,11 @@ class SizeDiff(BaseModel):
     old: int
 
 
+class DeploymentNavigation(BaseModel):
+    prev: int | None
+    next: int | None
+
+
 class DeploymentDiff(BaseModel):
     changed: dict[str, PackageDiff]
     removed: dict[str, tuple[list[str | None], int]]
@@ -64,6 +69,7 @@ class DeploymentDiff(BaseModel):
     sizes: SizeDiff
     deployment: DeploymentDTO
     machine: str
+    navigation: DeploymentNavigation
 
 
 class WebHookConfig(BaseModel):

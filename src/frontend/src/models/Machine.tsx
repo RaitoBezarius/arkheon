@@ -2,8 +2,8 @@ import { Component, For, createEffect, createSignal, Show } from "solid-js";
 import { Collapse } from "solid-collapse";
 import { Deployment } from "./Deployment.tsx";
 import { date, get } from "../utils";
-import { FaSolidChevronDown, FaSolidChevronUp } from "solid-icons/fa";
 import { URLS } from "../urls";
+import { IconChevronDown, IconChevronUp } from "@tabler/icons-solidjs";
 
 export const Machine: Component<Machine> = (props) => {
   const [isExpanded, setExpanded] = createSignal(true);
@@ -25,7 +25,7 @@ export const Machine: Component<Machine> = (props) => {
         onclick={toggle}
       >
         <span class="icon">
-          {isExpanded() ? <FaSolidChevronUp /> : <FaSolidChevronDown />}
+          {isExpanded() ? <IconChevronUp /> : <IconChevronDown />}
         </span>
       </button>
 

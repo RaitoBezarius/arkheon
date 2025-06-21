@@ -10,6 +10,7 @@ from arkheon.package import closure_paths_to_map
 from arkheon.schemas import (
     DeploymentDiff,
     DeploymentDTO,
+    DeploymentNavigation,
     PackageDiff,
     SizeDiff,
     StorePathCreate,
@@ -83,6 +84,7 @@ async def read_deployment_diff(
     db: AsyncSession,
     new: Deployment,
     old: Deployment | None,
+    next: int | None,
 ) -> DeploymentDiff:
     new_pkgs = closure_paths_to_map(await new.awaitable_attrs.closure)
     old_pkgs = (
@@ -115,4 +117,5 @@ async def read_deployment_diff(
         sizes=SizeDiff(new=new_size, old=old_size),
         deployment=DeploymentDTO.model_validate(new),
         machine=new.target_machine.identifier,
+        navigation=DeploymentNavigation(prev=old and old.id, next=next),
     )

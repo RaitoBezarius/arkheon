@@ -157,6 +157,7 @@ async def get_deployment_diff(
 
     if diff_from is not None:
         try:
+            next = None
             old = (
                 (await db.execute(select(Deployment).where(Deployment.id == diff_from)))
                 .scalars()
@@ -190,4 +191,20 @@ async def get_deployment_diff(
             .first()
         )
 
-    return await read_deployment_diff(db, new, old)
+        next = (
+            (
+                await db.execute(
+                    select(Deployment.id)
+                    .where(
+                        Deployment.id > await new.awaitable_attrs.id,
+                        Deployment.target_machine
+                        == await new.awaitable_attrs.target_machine,
+                    )
+                    .order_by(Deployment.created_at)
+                )
+            )
+            .scalars()
+            .first()
+        )
+
+    return await read_deployment_diff(db, new, old, next)

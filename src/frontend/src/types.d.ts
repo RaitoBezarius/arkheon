@@ -48,4 +48,5 @@ interface RawDiff {
   sizes: { old: number; new: number };
   deployment: Deployment;
   machine: string;
+  navigation: { prev: number | null; next: number | null };
 }

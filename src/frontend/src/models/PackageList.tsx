@@ -1,7 +1,14 @@
-import { Component, For, Show, createSignal } from "solid-js";
+import { Component, For, Show, createEffect } from "solid-js";
 import { Version } from "../components/Version";
 import { Size } from "../components/Size";
-import { FaSolidArrowsUpDown } from "solid-icons/fa";
+import {
+  IconArrowsSort,
+  IconSortAscendingLetters,
+  IconSortAscendingSmallBig,
+  IconSortDescendingLetters,
+  IconSortDescendingSmallBig,
+} from "@tabler/icons-solidjs";
+import { createStore } from "solid-js/store";
 
 const enum Sort {
   Alphabetical = "Alphabetical",
@@ -16,9 +23,65 @@ export const PackageList: Component<{
   title: string;
   color: "danger" | "success" | "warning";
   entries: Package[];
-}> = ({ entries, color, title }) => {
-  const [sort, setSort] = createSignal(Sort.None);
-  const [pkgs, setPkgs] = createSignal(entries, { equals: false });
+}> = (props) => {
+  const entries = () => props.entries;
+
+  const [store, setStore] = createStore<{
+    pkgs: Package[];
+    reversed: boolean;
+    sort: Sort;
+  }>({
+    pkgs: [],
+    reversed: false,
+    sort: Sort.None,
+  });
+
+  const arrow = () => {
+    switch (store.sort) {
+      case Sort.Alphabetical:
+        return store.reversed ? (
+          <IconSortDescendingLetters />
+        ) : (
+          <IconSortAscendingLetters />
+        );
+      case Sort.Size:
+        return store.reversed ? (
+          <IconSortDescendingSmallBig />
+        ) : (
+          <IconSortAscendingSmallBig />
+        );
+      case Sort.None:
+        return <IconArrowsSort />;
+    }
+  };
+
+  const sortFunction = () => {
+    switch (store.sort) {
+      case Sort.Alphabetical:
+        return (a: Package, b: Package) => a.name.localeCompare(b.name);
+      case Sort.Size:
+        return (a: Package, b: Package) => delta(a) - delta(b);
+      default:
+        return (_a: Package, _b: Package) => 1;
+    }
+  };
+
+  const sortedPkgs = () => {
+    const ps = store.pkgs.slice();
+
+    ps.sort(sortFunction());
+
+    if (store.reversed) {
+      ps.reverse();
+    }
+
+    return ps;
+  };
+
+  createEffect(() => {
+    setStore("pkgs", entries());
+    setStore("sort", Sort.None);
+  });
 
   const Switch: Component<{ value: Sort }> = ({ value }) => {
     return (
@@ -26,12 +89,12 @@ export const PackageList: Component<{
         <button
           class="button is-small"
           classList={{
-            "is-info": sort() === value,
-            "is-light": sort() !== value,
+            "is-info": store.sort === value,
+            "is-light": store.sort !== value,
             // TODO: Add loading indication (using async ?)
             // "is-loading": loading(),
           }}
-          onclick={() => updateSort(value)}
+          onclick={() => setStore("sort", value)}
         >
           {value}
         </button>
@@ -39,24 +102,9 @@ export const PackageList: Component<{
     );
   };
 
-  const updateSort = (s: Sort) => {
-    if (s === sort()) return;
-
-    setSort(s);
-
-    switch (s) {
-      case Sort.Alphabetical:
-        setPkgs((pkgs) => pkgs.sort((a, b) => a.name.localeCompare(b.name)));
-        break;
-      case Sort.Size:
-        setPkgs((pkgs) => pkgs.sort((a, b) => delta(a) - delta(b)));
-        break;
-    }
-  };
-
   return (
-    <Show when={entries.length > 0}>
-      <section class={`notification is-${color} block`}>
+    <Show when={store.pkgs.length > 0}>
+      <section class={`notification is-${props.color} block`}>
         <div class="field has-addons is-pulled-right">
           <Switch value={Sort.Alphabetical} />
 
@@ -65,18 +113,16 @@ export const PackageList: Component<{
           <p class="control">
             <button
               class="button is-small is-info"
-              onclick={() => setPkgs((pkgs) => pkgs.reverse())}
+              onclick={() => setStore("reversed", (b) => !b)}
             >
-              <span class="icon">
-                <FaSolidArrowsUpDown />
-              </span>
+              <span class="icon">{arrow()}</span>
             </button>
           </p>
         </div>
 
-        <h2 class="title">{title}</h2>
+        <h2 class="title">{props.title}</h2>
 
-        <For each={pkgs()}>
+        <For each={sortedPkgs()}>
           {({ name, size, versions, previous = null }) => (
             <div class="field is-grouped pkg">
               <Show when={previous} fallback={<Size bytes={size} />}>
@@ -98,9 +144,7 @@ export const PackageList: Component<{
                 }
               >
                 <For each={previous!.versions}>
-                  {(v) => (
-                    <Version v={v} cls="is-danger is-light has-text-black" />
-                  )}
+                  {(v) => <Version v={v} cls="is-danger has-text-black" />}
                 </For>
 
                 <span class="control">
@@ -108,9 +152,7 @@ export const PackageList: Component<{
                 </span>
 
                 <For each={versions}>
-                  {(v) => (
-                    <Version v={v} cls="is-success is-light has-text-black" />
-                  )}
+                  {(v) => <Version v={v} cls="is-success has-text-black" />}
                 </For>
               </Show>
             </div>

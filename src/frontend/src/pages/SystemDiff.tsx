@@ -1,12 +1,70 @@
-import { Show, createEffect, createSignal } from "solid-js";
+import {
+  Component,
+  JSXElement,
+  Show,
+  createEffect,
+  createSignal,
+} from "solid-js";
 import { useParams } from "@solidjs/router";
 import { date, get, sortVersions } from "../utils";
 import { Size } from "../components/Size";
 import { PackageList } from "../models/PackageList";
 import { URLS } from "../urls";
+import { Dynamic } from "solid-js/web";
+import { IconSwipeDown, IconSwipeUp } from "@tabler/icons-solidjs";
 
+const NavButton: Component<{
+  id: number | null;
+  icon: JSXElement;
+  text: string;
+}> = (props) => {
+  const id = () => props.id;
+
+  const [loading, setLoading] = createSignal(false);
+  const [url, setUrl] = createSignal<string>();
+
+  createEffect(() => {
+    setUrl(`/diff/${id()}`);
+    setLoading(false);
+  });
+
+  const content = (
+    <>
+      <span class="icon">{props.icon}</span>
+      <span>{props.text}</span>
+    </>
+  );
+  return (
+    <Show
+      when={id()}
+      fallback={
+        <button class="button is-primary is-light" disabled>
+          {content}
+        </button>
+      }
+    >
+      <a
+        href={url()}
+        class="button is-primary is-light"
+        classList={{
+          "is-loading": loading(),
+        }}
+        onClick={() => setLoading(true)}
+      >
+        {content}
+      </a>
+    </Show>
+  );
+};
 export default function Diff() {
   const [diff, setDiff] = createSignal<Diff>();
+  const [prev, setPrev] = createSignal<number | null>(null);
+  const [next, setNext] = createSignal<number | null>(null);
+
+  const addedPkgs = () => diff()?.added || [];
+
+  const size = () => diff()?.sizes.new || 0;
+  const sizeDiff = () => size() - (diff()?.sizes.old || 0);
 
   const params = useParams();
 
@@ -48,6 +106,8 @@ export default function Diff() {
           deployment: d.deployment,
           machine: d.machine,
         });
+        setPrev(d.navigation.prev);
+        setNext(d.navigation.next);
       },
       ["deployment", params.id],
     );
@@ -75,21 +135,36 @@ export default function Diff() {
           <hr />
 
           <div class="block">
+            <div class="buttons is-pulled-right has-addons">
+              <NavButton
+                id={next()}
+                icon={<IconSwipeUp />}
+                text="Next deployment"
+              ></NavButton>
+
+              <NavButton
+                id={prev()}
+                icon={<IconSwipeDown />}
+                text="Previous deployment"
+              ></NavButton>
+            </div>
+
             <div class="field is-horizontal">
               <label class="label diff">New closure size :</label>
-              <Size bytes={d().sizes.new} />
+              <Size bytes={size()} />
             </div>
 
             <div class="field is-horizontal">
               <label class="label diff">Size delta :</label>
-              <Size bytes={d().sizes.new - d().sizes.old} colored signed />
+              <Size bytes={sizeDiff()} colored signed />
             </div>
           </div>
 
-          <PackageList
+          <Dynamic
+            component={PackageList}
             title="Added packages"
             color="success"
-            entries={d().added}
+            entries={addedPkgs()}
           />
 
           <PackageList
