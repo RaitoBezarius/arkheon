@@ -10,16 +10,15 @@
   },
   "dependencies": {
     "@solidjs/router": "^0.12.4",
-    "sass-embedded": "^1.89.2",
+    "@tabler/icons-solidjs": "^3.34.0",
     "solid-collapse": "^1.1.0",
-    "solid-icons": "^1.1.0",
     "solid-js": "^1.8.14"
   },
   "devDependencies": {
     "@tsconfig/vite-react": "^3.0.0",
-    "sass": "^1.71.1",
+    "sass": "^1.89.2",
     "typescript": "^5.3.3",
-    "vite": "^5.1.0",
+    "vite": "^6.3.5",
     "vite-plugin-solid": "^2.9.1"
   }
 }

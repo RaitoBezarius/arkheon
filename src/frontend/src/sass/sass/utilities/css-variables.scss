@@ -49,9 +49,9 @@
   @include register-var(
     $name,
     (
-      red($value),
-      green($value),
-      blue($value),
+      color.channel($value, "red", $space: rgb),
+      color.channel($value, "green", $space: rgb),
+      color.channel($value, "blue", $space: rgb)
     ),
     "",
     "-rgb"
@@ -61,19 +61,19 @@
 @mixin register-hsl($name, $value) {
   @include register-var(
     $name,
-    math.round(hue($value)),
+    math.round(color.channel($value, "hue", $space: hsl)),
     "",
     "-h"
   );
   @include register-var(
     $name,
-    math.round(saturation($value)),
+    math.round(color.channel($value, "saturation", $space: hsl)),
     "",
     "-s"
   );
   @include register-var(
     $name,
-    math.round(lightness($value)),
+    math.round(color.channel($value, "lightness", $space: hsl)),
     "",
     "-l"
   );
@@ -98,6 +98,7 @@
         $on-scheme-color: color.adjust(
           $on-scheme-color,
           $lightness: 5%,
+          $space: hsl
         );
         $fg-lum: fn.bulmaColorLuminance($on-scheme-color);
       }
@@ -112,13 +113,18 @@
         $on-scheme-color: color.adjust(
           $on-scheme-color,
           $lightness: -5%,
+          $space: hsl
         );
         $fg-lum: fn.bulmaColorLuminance($on-scheme-color);
       }
     }
   }
 
-  $on-scheme-lightness: lightness($on-scheme-color);
+  $on-scheme-lightness: color.channel(
+    $on-scheme-color,
+    "lightness",
+    $space: hsl
+  );
   @include register-var($name, $on-scheme-lightness, "", "-on-scheme-l");
   $on-scheme-l: getVar($name, "", "-on-scheme-l");
   @include register-var(
@@ -138,6 +144,7 @@
       $on-scheme-color: color.adjust(
         $on-scheme-color,
         $lightness: -5%,
+        $space: hsl
       );
     }
   } @else {
@@ -146,11 +153,16 @@
       $on-scheme-color: color.adjust(
         $on-scheme-color,
         $lightness: 5%,
+        $space: hsl
       );
     }
   }
 
-  $on-scheme-lightness: lightness($on-scheme-color);
+  $on-scheme-lightness: color.channel(
+    $on-scheme-color,
+    "lightness",
+    $space: hsl
+  );
   @include register-var($name, $on-scheme-lightness, "", "-on-scheme-l");
 }
 
@@ -168,7 +180,7 @@
   @if $invert {
     @include register-var(
       $name,
-      lightness($invert),
+      color.channel($invert, "lightness", $space: hsl),
       "",
       "-invert-l"
     );
@@ -184,9 +196,9 @@
   $light: null,
   $dark: null
 ) {
-  $h:math.round(hue($base)); // Hue
-  $s:math.round(saturation($base)); // Saturation
-  $l:math.round(lightness($base)); // Lightness
+  $h:math.round(color.channel($base, "hue", $space: hsl)); // Hue
+  $s:math.round(color.channel($base, "saturation", $space: hsl)); // Saturation
+  $l:math.round(color.channel($base, "lightness", $space: hsl)); // Lightness
   $base-lum: fn.bulmaColorLuminance($base);
   $l-base: math.round($l % 10); // Get lightness second digit: 53% -> 3%
   $l-0: 0%; // 5% or less
@@ -291,8 +303,8 @@
       $fg-lum: fn.bulmaColorLuminance($foreground);
 
       @if (
-        lightness($foreground) >
-          lightness($background)
+        color.channel($foreground, "lightness", $space: hsl) >
+          color.channel($background, "lightness", $space: hsl)
       ) {
         $is-light-fg: true;
         $ratio: math.div(($fg-lum + 0.05), ($bg-lum + 0.05));
@@ -364,7 +376,7 @@
   @if $invert {
     @include register-var(
       $name,
-      lightness($invert),
+      color.channel($invert, "lightness", $space: hsl),
       "",
       "-invert-l"
     );
@@ -389,13 +401,13 @@
   @if $light and $dark {
     @include register-var(
       $name,
-      lightness($light),
+      color.channel($light, "lightness", $space: hsl),
       "",
       "-light-l"
     );
     @include register-var(
       $name,
-      lightness($light),
+      color.channel($light, "lightness", $space: hsl),
       "",
       "-dark-invert-l"
     );
@@ -404,13 +416,13 @@
 
     @include register-var(
       $name,
-      lightness($dark),
+      color.channel($dark, "lightness", $space: hsl),
       "",
       "-dark-l"
     );
     @include register-var(
       $name,
-      lightness($dark),
+      color.channel($dark, "lightness", $space: hsl),
       "",
       "-light-invert-l"
     );

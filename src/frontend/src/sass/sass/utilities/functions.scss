@@ -105,9 +105,9 @@
   }
 
   $color-rgb: (
-    "red": red($color),
-    "green": green($color),
-    "blue": blue($color),
+    "red": color.channel($color, "red", $space: rgb),
+    "green": color.channel($color, "green", $space: rgb),
+    "blue": color.channel($color, "blue", $space: rgb),
   );
 
   @each $name, $value in $color-rgb {
@@ -145,8 +145,8 @@
   @if meta.type-of($color) == "color" {
     $l: 96%;
 
-    @if lightness($color) > 96% {
-      $l: lightness($color);
+    @if color.channel($color, "lightness", $space: hsl) > 96% {
+      $l: color.channel($color, "lightness", $space: hsl);
     }
 
     @return color.change($color, $lightness: $l);
@@ -194,17 +194,17 @@
 @function bulmaColorBrightness($n) {
   $color-brightness: math.round(
     math.div(
-      (red($n) * 299) +
-        (green($n) * 587) +
-        (blue($n) * 114),
+      (color.channel($n, "red", $space: rgb) * 299) +
+        (color.channel($n, "green", $space: rgb) * 587) +
+        (color.channel($n, "blue", $space: rgb) * 114),
       1000
     )
   );
   $light-color: math.round(
     math.div(
-      (red(#ffffff) * 299) +
-      (green(#ffffff) * 587) +
-      (blue(#ffffff) * 114),
+      (color.channel(#ffffff, "red", $space: rgb) * 299) +
+        (color.channel(#ffffff, "green", $space: rgb) * 587) +
+        (color.channel(#ffffff, "blue", $space: rgb) * 114),
       1000
     )
   );
@@ -219,38 +219,38 @@
 @function bulmaEnoughContrast($foreground, $background) {
   $r: (
       max(
-        red($foreground),
-        red($background)
+        color.channel($foreground, "red", $space: rgb),
+        color.channel($background, "red", $space: rgb)
       )
     ) -
     (
       min(
-        red($foreground),
-        red($background)
+        color.channel($foreground, "red", $space: rgb),
+        color.channel($background, "red", $space: rgb)
       )
     );
   $g: (
       max(
-        green($foreground),
-        green($background)
+        color.channel($foreground, "green", $space: rgb),
+        color.channel($background, "green", $space: rgb)
       )
     ) -
     (
       min(
-        green($foreground),
-        green($background)
+        color.channel($foreground, "green", $space: rgb),
+        color.channel($background, "green", $space: rgb)
       )
     );
   $b: (
       max(
-        blue($foreground),
-        blue($background)
+        color.channel($foreground, "blue", $space: rgb),
+        color.channel($background, "blue", $space: rgb)
       )
     ) -
     (
       min(
-        blue($foreground),
-        blue($background)
+        color.channel($foreground, "blue", $space: rgb),
+        color.channel($background, "blue", $space: rgb)
       )
     );
   $sum-rgb: $r + $g + $b;
