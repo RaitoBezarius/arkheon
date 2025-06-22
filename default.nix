@@ -9,7 +9,7 @@
 {
   tests = import ./tests { inherit sources pkgs; };
 
-  overlay = import ./nix/overlay.nix;
+  inherit overlay;
 
   packages = {
     inherit (pkgs.python3.pkgs) arkheon;
