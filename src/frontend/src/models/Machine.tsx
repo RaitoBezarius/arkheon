@@ -21,7 +21,7 @@ export const Machine: Component<Machine> = (props) => {
   return (
     <div class="box">
       <button
-        class="button is-small is-link is-light is-pulled-right"
+        class="button is-small is-info is-pulled-right"
         onclick={toggle}
       >
         <span class="icon">
@@ -31,7 +31,8 @@ export const Machine: Component<Machine> = (props) => {
 
       <h3 classList={{ "mb-2": isExpanded() }}>
         <b>
-          {props.identifier} [{deployments().length}]
+          <span>{props.identifier}</span>
+          <span class="tag ml-2 is-info">{deployments().length}</span>
         </b>
         <Show when={deployments().length > 0}>
           <a
