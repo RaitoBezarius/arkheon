@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024 sinavir <sinavir@sinavir.fr>
+#
+# SPDX-License-Identifier: EUPL-1.2
+
 {
   sources ? import ../npins,
   pkgs ? import sources.nixpkgs { },

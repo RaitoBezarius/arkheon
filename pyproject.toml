@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Tom Hubrecht <github@mail.hubrecht.ovh>
+#
+# SPDX-License-Identifier: MIT
+
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
@@ -11,7 +15,7 @@ authors = [
   { name="sinavir", email="sinavir@sinavir.fr" },
 ]
 description = "Track your Nix closures over time"
-license = {file = "LICENSE"}
+license = {file = "LICENSES/EUPL-1.2.txt"}
 readme = "README.md"
 requires-python = ">=3.11"
 classifiers = [

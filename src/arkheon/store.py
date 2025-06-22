@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2024 Raito Bezarius <masterancpp@gmail.com>
+# SPDX-FileCopyrightText: 2025 Tom Hubrecht <github@mail.hubrecht.ovh>
+#
+# SPDX-License-Identifier: EUPL-1.2
+
 import os.path
 from pathlib import Path
 from typing import Union

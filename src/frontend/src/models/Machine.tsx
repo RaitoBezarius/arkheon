@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Tom Hubrecht <github@mail.hubrecht.ovh>
+//
+// SPDX-License-Identifier: EUPL-1.2
+
 import { Component, For, createEffect, createSignal, Show } from "solid-js";
 import { Collapse } from "solid-collapse";
 import { Deployment } from "./Deployment.tsx";

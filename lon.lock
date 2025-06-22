@@ -11,6 +11,16 @@
       "url": "https://github.com/cachix/git-hooks.nix/archive/623c56286de5a3193aa38891a6991b28f9bab056.tar.gz",
       "hash": "sha256-WUaIlOlPLyPgz9be7fqWJA5iG6rHcGRtLERSCfUDne4="
     },
+    "nix-reuse": {
+      "type": "Git",
+      "fetchType": "git",
+      "branch": "main",
+      "revision": "45633dc6a0512cbbb010bc615b5d1b6e46e57597",
+      "url": "https://git.dgnum.eu/DGNum/nix-reuse.git",
+      "hash": "sha256-xr63AvDLp+RS0F7qwuOoWNENuepPbpuHLe4VPS85XBQ=",
+      "lastModified": 1737547777,
+      "submodules": false
+    },
     "nixpkgs": {
       "type": "GitHub",
       "fetchType": "tarball",

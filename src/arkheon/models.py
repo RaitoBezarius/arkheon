@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2024 Raito Bezarius <masterancpp@gmail.com>
+# SPDX-FileCopyrightText: 2025 Tom Hubrecht <github@mail.hubrecht.ovh>
+#
+# SPDX-License-Identifier: EUPL-1.2
+
 import datetime
 import logging
 from typing import List
@@ -10,9 +15,7 @@ from sqlalchemy import (
     Table,
     UniqueConstraint,
     func,
-    select,
 )
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from arkheon.database import Base

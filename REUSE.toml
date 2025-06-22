@@ -1,0 +1,30 @@
+version = 1
+[[annotations]]
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
+path = [".envrc", ".gitignore", ".flake8", "lon.lock", "lon.nix", "src/frontend/package-lock.json", "src/frontend/package.json", "src/frontend/tsconfig.json", "src/frontend/tsconfig.node.json", "src/frontend/vite.config.ts", "src/arkheon/migrations/versions/*.py"]
+precedence = "closest"
+
+[[annotations]]
+SPDX-FileCopyrightText = "Tom Hubrecht <github@mail.hubrecht.ovh>"
+SPDX-License-Identifier = "CC-BY-NC-ND-1.0"
+path = ["Arkheon.png", "src/frontend/public/*"]
+precedence = "closest"
+
+[[annotations]]
+SPDX-FileCopyrightText = "Jeremy Thomas"
+SPDX-License-Identifier = "MIT"
+path = "src/frontend/src/sass/bulma/**"
+precedence = "closest"
+
+[[annotations]]
+SPDX-FileCopyrightText = "2020 Braille Institute of America, Inc."
+SPDX-License-Identifier = "OFL-1.1"
+path = ["src/frontend/src/assets/fonts/AtkinsonHyperlegibleMono-Regular.woff2", "src/frontend/src/assets/fonts/AtkinsonHyperlegibleNext-Regular.woff2"]
+precedence = "closest"
+
+[[annotations]]
+SPDX-FileCopyrightText = "2009-2025 Michael Bayer"
+SPDX-License-Identifier = "MIT"
+path = ["src/arkheon/alembic.ini", "src/arkheon/migrations/env.py", "src/arkheon/migrations/script.py.mako"]
+precedence = "closest"

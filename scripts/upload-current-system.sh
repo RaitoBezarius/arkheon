@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# SPDX-FileCopyrightText: 2024 Raito Bezarius <masterancpp@gmail.com>
+# SPDX-FileCopyrightText: 2025 Tom Hubrecht <github@mail.hubrecht.ovh>
+#
+# SPDX-License-Identifier: EUPL-1.2
+
 TOP_LEVEL=$(nix path-info /run/current-system)
 
 nix path-info --closure-size -rsh /run/current-system --json | curl -X POST \

@@ -1,4 +1,8 @@
-from sqlalchemy import Row, select
+# SPDX-FileCopyrightText: 2025 Tom Hubrecht <github@mail.hubrecht.ovh>
+#
+# SPDX-License-Identifier: EUPL-1.2
+
+from sqlalchemy import select
 from sqlalchemy.dialects.sqlite import insert
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession

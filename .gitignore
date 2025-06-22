@@ -31,3 +31,4 @@ dist-ssr
 *.sln
 *.sw?
 arkheon.db
+.pre-commit-config.yaml

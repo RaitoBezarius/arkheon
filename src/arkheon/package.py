@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2024 Raito Bezarius <masterancpp@gmail.com>
+# SPDX-FileCopyrightText: 2025 Tom Hubrecht <github@mail.hubrecht.ovh>
+#
+# SPDX-License-Identifier: EUPL-1.2
+
 # From nvd, Apache License 2.0.
 import re
 from typing import Dict, List, Optional, Tuple, Union

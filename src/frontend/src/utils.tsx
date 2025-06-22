@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Tom Hubrecht <github@mail.hubrecht.ovh>
+//
+// SPDX-License-Identifier: EUPL-1.2
+
 const units = Array.of("KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB");
 
 type AbstractFunction = (_: any) => void;

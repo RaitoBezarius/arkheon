@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Tom Hubrecht <github@mail.hubrecht.ovh>
+//
+// SPDX-License-Identifier: EUPL-1.2
+
 import { Component, For, Show, createEffect } from "solid-js";
 import { Version } from "../components/Version";
 import { Size } from "../components/Size";

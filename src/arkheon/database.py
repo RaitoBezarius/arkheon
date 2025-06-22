@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2024 Raito Bezarius <masterancpp@gmail.com>
+# SPDX-FileCopyrightText: 2025 Tom Hubrecht <github@mail.hubrecht.ovh>
+#
+# SPDX-License-Identifier: EUPL-1.2
+
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
