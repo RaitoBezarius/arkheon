@@ -83,6 +83,19 @@ export const PackageList: Component<{
     setStore("sort", Sort.None);
   });
 
+  const load =
+    (callback: () => void) =>
+    (e: MouseEvent & { currentTarget: HTMLButtonElement }) => {
+      const t = e.currentTarget;
+
+      t.classList.add("is-loading");
+
+      setTimeout(() => {
+        callback();
+        t.classList.remove("is-loading");
+      }, 15);
+    };
+
   const Switch: Component<{ value: Sort }> = ({ value }) => {
     return (
       <p class="control">
@@ -91,10 +104,8 @@ export const PackageList: Component<{
           classList={{
             "is-info": store.sort === value,
             "is-light": store.sort !== value,
-            // TODO: Add loading indication (using async ?)
-            // "is-loading": loading(),
           }}
-          onclick={() => setStore("sort", value)}
+          onclick={load(() => setStore("sort", value))}
         >
           {value}
         </button>
@@ -113,7 +124,7 @@ export const PackageList: Component<{
           <p class="control">
             <button
               class="button is-small is-info"
-              onclick={() => setStore("reversed", (b) => !b)}
+              onclick={load(() => setStore("reversed", (b) => !b))}
             >
               <span class="icon">{arrow()}</span>
             </button>
