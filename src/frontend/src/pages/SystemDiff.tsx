@@ -11,7 +11,7 @@ import { Size } from "../components/Size";
 import { PackageList } from "../models/PackageList";
 import { URLS } from "../urls";
 import { Dynamic } from "solid-js/web";
-import { IconSwipeDown, IconSwipeUp } from "@tabler/icons-solidjs";
+import { IconArrowMoveDownFilled, IconArrowMoveUpFilled } from "@tabler/icons-solidjs";
 
 const NavButton: Component<{
   id: number | null;
@@ -60,11 +60,6 @@ export default function Diff() {
   const [diff, setDiff] = createSignal<Diff>();
   const [prev, setPrev] = createSignal<number | null>(null);
   const [next, setNext] = createSignal<number | null>(null);
-
-  const addedPkgs = () => diff()?.added || [];
-
-  const size = () => diff()?.sizes.new || 0;
-  const sizeDiff = () => size() - (diff()?.sizes.old || 0);
 
   const params = useParams();
 
@@ -138,25 +133,25 @@ export default function Diff() {
             <div class="buttons is-pulled-right has-addons">
               <NavButton
                 id={next()}
-                icon={<IconSwipeUp />}
+                icon={<IconArrowMoveUpFilled />}
                 text="Next deployment"
               ></NavButton>
 
               <NavButton
                 id={prev()}
-                icon={<IconSwipeDown />}
+                icon={<IconArrowMoveDownFilled />}
                 text="Previous deployment"
               ></NavButton>
             </div>
 
             <div class="field is-horizontal">
               <label class="label diff">New closure size :</label>
-              <Size bytes={size()} />
+              <Size bytes={d().sizes.new} />
             </div>
 
             <div class="field is-horizontal">
               <label class="label diff">Size delta :</label>
-              <Size bytes={sizeDiff()} colored signed />
+              <Size bytes={d().sizes.new - d().sizes.old} colored signed />
             </div>
           </div>
 
@@ -164,7 +159,7 @@ export default function Diff() {
             component={PackageList}
             title="Added packages"
             color="success"
-            entries={addedPkgs()}
+            entries={d().added}
           />
 
           <PackageList
