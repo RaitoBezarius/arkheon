@@ -11,7 +11,7 @@ from arkheon.credentials import settings
 from arkheon.crud import create_deployment
 from arkheon.crud.deployment import read_deployment_diff
 from arkheon.database import get_db
-from arkheon.models import Deployment, Machine, StorePath, WebHook
+from arkheon.models import Deployment, Machine, WebHook
 from arkheon.schemas import DeploymentDiff, DeploymentDTO, Message, StorePathCreate
 
 router = APIRouter(prefix="/v1")
@@ -48,16 +48,15 @@ async def get_machine_deployments(
     db: AsyncSession = Depends(get_db),
 ) -> Any:
     return [
-        DeploymentDTO.model_validate(d).model_dump() | {"size": size}
-        for (d, size) in (
+        DeploymentDTO.model_validate(d)
+        for d in (
             await db.execute(
-                select(Deployment, StorePath.closure_size)
+                select(Deployment)
                 .join(Machine)
-                .join(StorePath, StorePath.path == Deployment.toplevel)
                 .where(Machine.identifier == machine)
                 .order_by(desc(Deployment.id))
             )
-        ).all()
+        ).scalars()
     ]
 
 
@@ -120,10 +119,8 @@ async def post_machine_deployment(
                 "operator": deployment.operator,
                 "machine": machine,
                 "deployment_id": deployment.id,
-                "closure_size": await deployment.closure_size(db),
-                "previous_size": (
-                    last_deployment and (await last_deployment.closure_size(db))
-                ),
+                "closure_size": deployment.size,
+                "previous_size": last_deployment and last_deployment.size,
             },
         )
 

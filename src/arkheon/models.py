@@ -103,14 +103,7 @@ class Deployment(Base):
         cascade="merge",
     )
     toplevel: Mapped[str] = mapped_column(index=True)
-
-    async def closure_size(self, db: AsyncSession) -> int:
-        return (
-            (await db.execute(select(StorePath).where(StorePath.path == self.toplevel)))
-            .scalars()
-            .one()
-            .closure_size
-        )
+    size: Mapped[int] = mapped_column(default=0)
 
 
 class WebHook(Base):

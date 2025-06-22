@@ -48,6 +48,8 @@ async def create_deployment(
     except NoResultFound:
         await db.execute(insert(Operator).values(name=operator))
 
+    paths = await create_closure(db, closure, toplevel)
+
     # Create the deployment
     deployment_obj = (
         (
@@ -57,6 +59,7 @@ async def create_deployment(
                     operator_id=operator,
                     target_machine_id=machine_obj.id,
                     toplevel=toplevel,
+                    size=paths[toplevel].closure_size,
                 )
                 .returning(Deployment)
             )
@@ -66,7 +69,7 @@ async def create_deployment(
     )
 
     # Link the closure to its deployment
-    for path in (await create_closure(db, closure, toplevel)).values():
+    for path in paths.values():
         await db.execute(
             insert(models.closures_table).values(
                 store_path_id=path.id,
@@ -93,9 +96,6 @@ async def read_deployment_diff(
         else closure_paths_to_map(await old.awaitable_attrs.closure)
     )
 
-    new_size = await new.closure_size(db)
-    old_size = 0 if old is None else await old.closure_size(db)
-
     new_pnames = set(new_pkgs.keys())
     old_pnames = set(old_pkgs.keys())
 
@@ -114,7 +114,7 @@ async def read_deployment_diff(
         },
         removed={pname: old_pkgs[pname] for pname in pkgs_removed},
         added={pname: new_pkgs[pname] for pname in pkgs_added},
-        sizes=SizeDiff(new=new_size, old=old_size),
+        sizes=SizeDiff(new=new.size, old=(old and old.size) or 0),
         deployment=DeploymentDTO.model_validate(new),
         machine=new.target_machine.identifier,
         navigation=DeploymentNavigation(prev=old and old.id, next=next),

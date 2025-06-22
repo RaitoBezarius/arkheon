@@ -42,6 +42,7 @@ class DeploymentDTO(BaseModel):
     target_machine_id: int
     created_at: datetime
     toplevel: str
+    size: int
 
     class Config:
         from_attributes = True
