@@ -1,17 +1,14 @@
 import logging
 from contextlib import asynccontextmanager
-from typing import Annotated, Optional
 
-import httpx
-from fastapi import Depends, FastAPI, Header, HTTPException, Response, status
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import TypeAdapter
 from sqlalchemy import delete
 from sqlalchemy.dialects.sqlite import insert
-from sqlalchemy.orm import Session
 
 from arkheon.credentials import settings
-from arkheon.database import get_db, sessionmanager
+from arkheon.database import sessionmanager
 from arkheon.models import WebHook
 from arkheon.schemas import WebHookConfig
 
@@ -22,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 def init_app(init_db: bool = True):
     @asynccontextmanager
-    async def lifespan(app: FastAPI):
+    async def lifespan(_app: FastAPI):
         if settings.TOKEN is None:
             logger.warning("No token is provided for Arkheon.")
 

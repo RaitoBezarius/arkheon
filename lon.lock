@@ -1,6 +1,16 @@
 {
   "version": "1",
   "sources": {
+    "git-hooks.nix": {
+      "type": "GitHub",
+      "fetchType": "tarball",
+      "owner": "cachix",
+      "repo": "git-hooks.nix",
+      "branch": "master",
+      "revision": "623c56286de5a3193aa38891a6991b28f9bab056",
+      "url": "https://github.com/cachix/git-hooks.nix/archive/623c56286de5a3193aa38891a6991b28f9bab056.tar.gz",
+      "hash": "sha256-WUaIlOlPLyPgz9be7fqWJA5iG6rHcGRtLERSCfUDne4="
+    },
     "nixpkgs": {
       "type": "GitHub",
       "fetchType": "tarball",

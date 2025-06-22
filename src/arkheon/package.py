@@ -1,7 +1,5 @@
 # From nvd, Apache License 2.0.
 import re
-import subprocess
-from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
 
 from . import models
@@ -133,29 +131,29 @@ class PackageManifest:
         for entry in packages:
             self._packages_by_pname.setdefault(entry.pname(), []).append(entry)
 
-    @staticmethod
-    def parse_tree(root: Path) -> "PackageManifest":
-        direct_deps_str: str = subprocess.run(
-            [make_nix_bin_path("nix-store"), "--query", "--references", str(root)],
-            stdout=PIPE,
-            text=True,
-            check=True,
-        ).stdout.rstrip("\n")
-
-        direct_deps: List[str] = direct_deps_str.split("\n") if direct_deps_str else []
-
-        packages = []
-        for dep_path in direct_deps:
-            pname, version = parse_pname_version(dep_path)
-            packages.append(
-                Package(
-                    pname=pname,
-                    version=Version(version),
-                    store_path=StorePath(dep_path),
-                )
-            )
-
-        return PackageManifest(packages)
+    # @staticmethod
+    # def parse_tree(root: Path) -> "PackageManifest":
+    #     direct_deps_str: str = subprocess.run(
+    #         [make_nix_bin_path("nix-store"), "--query", "--references", str(root)],
+    #         stdout=PIPE,
+    #         text=True,
+    #         check=True,
+    #     ).stdout.rstrip("\n")
+    #
+    #     direct_deps: List[str] = direct_deps_str.split("\n") if direct_deps_str else []
+    #
+    #     packages = []
+    #     for dep_path in direct_deps:
+    #         pname, version = parse_pname_version(dep_path)
+    #         packages.append(
+    #             Package(
+    #                 pname=pname,
+    #                 version=Version(version),
+    #                 store_path=StorePath(dep_path),
+    #             )
+    #         )
+    #
+    #     return PackageManifest(packages)
 
     def contains_pname(self, pname: str) -> bool:
         return pname in self._packages_by_pname
