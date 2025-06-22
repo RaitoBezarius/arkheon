@@ -1,5 +1,5 @@
 {
-  sources ? import ./npins,
+  sources ? import ./lon.nix,
   overlay ? import ./nix/overlay.nix,
   pkgs ? import sources.nixpkgs {
     overlays = [ overlay ];
