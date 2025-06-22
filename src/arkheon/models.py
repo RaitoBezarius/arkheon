@@ -2,7 +2,6 @@ import datetime
 import logging
 from typing import List
 
-import httpx
 from sqlalchemy import (
     Column,
     DateTime,
@@ -21,7 +20,7 @@ from arkheon.database import Base
 logger = logging.getLogger(__name__)
 
 closures_table = Table(
-    "store_paths_closures",
+    "closures",
     Base.metadata,
     Column("store_path_id", Integer, ForeignKey("store_paths.id"), primary_key=True),
     Column("deployment_id", Integer, ForeignKey("deployments.id"), primary_key=True),
@@ -31,7 +30,7 @@ closures_table = Table(
 )
 
 references_table = Table(
-    "store_path_references",
+    "references",
     Base.metadata,
     Column("referrer_id", Integer, ForeignKey("store_paths.id"), primary_key=True),
     Column("referenced_id", Integer, ForeignKey("store_paths.id"), primary_key=True),
