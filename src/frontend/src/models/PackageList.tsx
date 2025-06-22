@@ -146,26 +146,28 @@ export const PackageList: Component<{
                 </span>
               </div>
 
-              <Show
-                when={previous}
-                fallback={
-                  <For each={versions}>
-                    {(v) => <Version v={v} cls="is-white" />}
+              <div class="field is-grouped versions">
+                <Show
+                  when={previous}
+                  fallback={
+                    <For each={versions}>
+                      {(v) => <Version v={v} cls="is-white" />}
+                    </For>
+                  }
+                >
+                  <For each={previous!.versions}>
+                    {(v) => <Version v={v} cls="is-danger has-text-black" />}
                   </For>
-                }
-              >
-                <For each={previous!.versions}>
-                  {(v) => <Version v={v} cls="is-danger has-text-black" />}
-                </For>
 
-                <span class="control">
-                  <b class="is-size-7">to</b>
-                </span>
+                  <span class="control">
+                    <b class="is-size-7">to</b>
+                  </span>
 
-                <For each={versions}>
-                  {(v) => <Version v={v} cls="is-success has-text-black" />}
-                </For>
-              </Show>
+                  <For each={versions}>
+                    {(v) => <Version v={v} cls="is-success has-text-black" />}
+                  </For>
+                </Show>
+              </div>
             </div>
           )}
         </For>

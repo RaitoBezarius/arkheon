@@ -23,9 +23,19 @@ $dark: rgb(46, 46, 46);
 }
 
 .pkg {
-  overflow-x: scroll;
   overflow-y: hidden;
-  margin-bottom: 0.5rem !important;
+
+  padding-bottom: 0.25rem !important;
+  margin-bottom: 0.25rem !important;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid;
+  }
+
+  .versions {
+    overflow-x: scroll;
+    margin-left: 0.25rem;
+  }
 }
 
 label.diff {
