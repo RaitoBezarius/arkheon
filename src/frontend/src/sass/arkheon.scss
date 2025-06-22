@@ -1,9 +1,8 @@
 @charset "utf-8";
 
-/*! bulma.io v1.0.4 | MIT License | github.com/jgthms/bulma */
 $dark: rgb(46, 46, 46);
 
-@use "sass" with (
+@use "bulma" with (
   $primary: #f39e60,
   $success: #cce0ac,
   $warning: #fff8c9,
