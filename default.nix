@@ -11,43 +11,43 @@
 }:
 
 let
+  inherit (pkgs.lib) genAttrs recursiveUpdate;
+
   nix-reuse = import sources.nix-reuse { inherit pkgs; };
 
   git-checks = (import sources."git-hooks.nix").run {
     src = ./.;
 
-    hooks = {
-      statix = {
-        enable = true;
-        stages = [ "pre-push" ];
-        settings.ignore = [ "lon.nix" ];
-      };
+    hooks =
+      recursiveUpdate
+        (genAttrs
+          [
+            # Nix files
+            "statix"
+            "deadnix"
+            "nixfmt-rfc-style"
 
-      deadnix = {
-        enable = true;
-        stages = [ "pre-push" ];
-        settings.edit = true;
-      };
+            # Python files
+            "isort"
+            "ruff"
+            "black"
+          ]
+          (_: {
+            enable = true;
+            stages = [ "pre-push" ];
+          })
+        )
+        {
+          statix.settings.ignore = [ "lon.nix" ];
 
-      nixfmt-rfc-style = {
-        enable = true;
-        stages = [ "pre-push" ];
-        package = pkgs.nixfmt-rfc-style;
-      };
+          deadnix.settings.edit = true;
 
-      reuse = nix-reuse.hook {
-        enable = true;
-        stages = [ "pre-push" ];
-        package = pkgs.reuse; # git-hooks.nix is lagging on nixpkgs update
-      };
+          nixfmt-rfc-style.package = pkgs.nixfmt-rfc-style;
 
-      ruff = {
-        enable = true;
-        stages = [ "pre-push" ];
-      };
+          reuse = nix-reuse.hook { package = pkgs.reuse; };
 
-      commitizen.enable = true;
-    };
+          commitizen.enable = true;
+        };
   };
 
   reuse = nix-reuse.install {

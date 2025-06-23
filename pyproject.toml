@@ -35,6 +35,7 @@ Issues = "https://github.com/RaitoBezarius/arkheon/issues"
 
 [tool.isort]
 profile = "black"
+float_to_top = true
 
 [tool.setuptools.dynamic]
 version = {attr = "arkheon.__VERSION__"}

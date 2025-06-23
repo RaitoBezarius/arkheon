@@ -23,7 +23,6 @@ def upgrade() -> None:
     op.rename_table("store_path_references", "references")
 
 
-
 def downgrade() -> None:
     """Downgrade schema."""
     op.rename_table("closures", "store_paths_closures")
