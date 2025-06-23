@@ -196,9 +196,9 @@
   $light: null,
   $dark: null
 ) {
-  $h:math.round(color.channel($base, "hue", $space: hsl)); // Hue
-  $s:math.round(color.channel($base, "saturation", $space: hsl)); // Saturation
-  $l:math.round(color.channel($base, "lightness", $space: hsl)); // Lightness
+  $h: math.round(color.channel($base, "hue", $space: hsl)); // Hue
+  $s: math.round(color.channel($base, "saturation", $space: hsl)); // Saturation
+  $l: math.round(color.channel($base, "lightness", $space: hsl)); // Lightness
   $base-lum: fn.bulmaColorLuminance($base);
   $l-base: math.round($l % 10); // Get lightness second digit: 53% -> 3%
   $l-0: 0%; // 5% or less

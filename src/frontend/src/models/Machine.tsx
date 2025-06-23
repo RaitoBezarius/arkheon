@@ -24,10 +24,7 @@ export const Machine: Component<Machine> = (props) => {
 
   return (
     <div class="box">
-      <button
-        class="button is-small is-info is-pulled-right"
-        onclick={toggle}
-      >
+      <button class="button is-small is-info is-pulled-right" onclick={toggle}>
         <span class="icon">
           {isExpanded() ? <IconChevronUp /> : <IconChevronDown />}
         </span>

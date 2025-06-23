@@ -17,7 +17,8 @@ $notification-colors: dv.$colors !default;
       "notification-s": #{cv.getVar("scheme-s")},
       "notification-background-l": #{cv.getVar("background-l")},
       "notification-color-l": #{cv.getVar("text-strong-l")},
-      "notification-code-background-color": #{$notification-code-background-color},
+      "notification-code-background-color":
+        #{$notification-code-background-color},
       "notification-radius": #{$notification-radius},
       "notification-padding": #{$notification-padding},
     )

@@ -15,7 +15,10 @@ import { Size } from "../components/Size";
 import { PackageList } from "../models/PackageList";
 import { URLS } from "../urls";
 import { Dynamic } from "solid-js/web";
-import { IconArrowMoveDownFilled, IconArrowMoveUpFilled } from "@tabler/icons-solidjs";
+import {
+  IconArrowMoveDownFilled,
+  IconArrowMoveUpFilled,
+} from "@tabler/icons-solidjs";
 
 const NavButton: Component<{
   id: number | null;

@@ -31,21 +31,25 @@ let
             "isort"
             "ruff"
             "black"
+
+            # Typescript files
+            "eslint"
+            "prettier"
           ]
-          (_: {
+          (_name: {
             enable = true;
             stages = [ "pre-push" ];
           })
         )
         {
           statix.settings.ignore = [ "lon.nix" ];
-
           deadnix.settings.edit = true;
-
           nixfmt-rfc-style.package = pkgs.nixfmt-rfc-style;
 
-          reuse = nix-reuse.hook { package = pkgs.reuse; };
+          prettier.package = pkgs.nodePackages.prettier;
+          eslint.package = pkgs.nodePackages.eslint;
 
+          reuse = nix-reuse.hook { package = pkgs.reuse; };
           commitizen.enable = true;
         };
   };

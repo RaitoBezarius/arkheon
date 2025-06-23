@@ -37,8 +37,10 @@ $menu-label-spacing: 1em !default;
       "menu-item-l": #{$menu-item-l},
       "menu-item-background-l": #{$menu-item-background-l},
       "menu-item-background-l-delta": #{$menu-item-background-l-delta},
-      "menu-item-hover-background-l-delta": #{$menu-item-hover-background-l-delta},
-      "menu-item-active-background-l-delta": #{$menu-item-active-background-l-delta},
+      "menu-item-hover-background-l-delta":
+        #{$menu-item-hover-background-l-delta},
+      "menu-item-active-background-l-delta":
+        #{$menu-item-active-background-l-delta},
       "menu-item-color-l": #{$menu-item-color-l},
       "menu-item-radius": #{$menu-item-radius},
       "menu-item-selected-h": #{$menu-item-selected-h},
@@ -87,9 +89,8 @@ $menu-label-spacing: 1em !default;
       #{cv.getVar("menu-item-h")},
       #{cv.getVar("menu-item-s")},
       calc(
-        #{cv.getVar("menu-item-background-l")} + #{cv.getVar(
-            "menu-item-background-l-delta"
-          )}
+        #{cv.getVar("menu-item-background-l")} +
+          #{cv.getVar("menu-item-background-l-delta")}
       )
     );
     border-radius: cv.getVar("menu-item-radius");

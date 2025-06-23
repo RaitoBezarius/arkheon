@@ -42,7 +42,8 @@ $message-colors: dv.$colors !default;
       "message-body-color": #{$message-body-color},
       "message-body-padding": #{$message-body-padding},
       "message-body-radius": #{$message-body-radius},
-      "message-body-pre-code-background-color": #{$message-body-pre-code-background-color},
+      "message-body-pre-code-background-color":
+        #{$message-body-pre-code-background-color},
       "message-header-body-border-width": #{$message-header-body-border-width},
       "message-h": #{$message-h},
       "message-s": #{$message-s},
@@ -98,11 +99,9 @@ $message-colors: dv.$colors !default;
         (
           "message-h": #{cv.getVar($name, "", "-h")},
           "message-s": #{cv.getVar($name, "", "-s")},
-          "message-border-l":
-            calc(
-              #{cv.getVar($name, "", "-l")} + #{cv.getVar(
-                  "message-border-l-delta"
-                )}
+          "message-border-l": calc(
+              #{cv.getVar($name, "", "-l")} +
+                #{cv.getVar("message-border-l-delta")}
             ),
           "message-color-l": #{cv.getVar($name, "", "-on-scheme-l")},
           "message-header-background-l": #{cv.getVar($name, "", "-l")},

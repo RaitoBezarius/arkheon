@@ -246,7 +246,9 @@ $file-colors: shared.$form-colors !default;
   &:active {
     @include cv.register-vars(
       (
-        "file-background-l-delta": #{cv.getVar("file-active-background-l-delta")},
+        "file-background-l-delta": #{cv.getVar(
+            "file-active-background-l-delta"
+          )},
         "file-border-l-delta": #{cv.getVar("file-active-border-l-delta")},
         "file-color-l-delta": #{cv.getVar("file-active-color-l-delta")},
       )
@@ -284,9 +286,8 @@ $file-colors: shared.$form-colors !default;
     cv.getVar("file-h"),
     cv.getVar("file-s"),
     calc(
-      #{cv.getVar("file-background-l")} + #{cv.getVar(
-          "file-background-l-delta"
-        )}
+      #{cv.getVar("file-background-l")} +
+        #{cv.getVar("file-background-l-delta")}
     )
   );
   color: hsl(

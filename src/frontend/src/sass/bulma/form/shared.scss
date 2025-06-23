@@ -108,9 +108,8 @@ $input-radius: cv.getVar("radius") !default;
     #{cv.getVar("input-h")},
     #{cv.getVar("input-s")},
     calc(
-      #{cv.getVar("input-background-l")} + #{cv.getVar(
-          "input-background-l-delta"
-        )}
+      #{cv.getVar("input-background-l")} +
+        #{cv.getVar("input-background-l-delta")}
     )
   );
   border-color: cv.getVar("input-border-color");

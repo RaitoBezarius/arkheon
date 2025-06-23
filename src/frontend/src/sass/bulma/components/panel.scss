@@ -53,8 +53,10 @@ $panel-colors: dv.$colors !default;
       "panel-list-item-color": #{$panel-list-item-color},
       "panel-list-item-hover-color": #{$panel-list-item-hover-color},
       "panel-block-color": #{$panel-block-color},
-      "panel-block-hover-background-color": #{$panel-block-hover-background-color},
-      "panel-block-active-border-left-color": #{$panel-block-active-border-left-color},
+      "panel-block-hover-background-color":
+        #{$panel-block-hover-background-color},
+      "panel-block-active-border-left-color":
+        #{$panel-block-active-border-left-color},
       "panel-block-active-color": #{$panel-block-active-color},
       "panel-block-active-icon-color": #{$panel-block-active-icon-color},
       "panel-icon-color": #{$panel-icon-color},

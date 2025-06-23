@@ -56,8 +56,10 @@ $table-colors: dv.$colors !default;
       "table-row-hover-background-color": #{$table-row-hover-background-color},
       "table-row-active-background-color": #{$table-row-active-background-color},
       "table-row-active-color": #{$table-row-active-color},
-      "table-striped-row-even-background-color": #{$table-striped-row-even-background-color},
-      "table-striped-row-even-hover-background-color": #{$table-striped-row-even-hover-background-color},
+      "table-striped-row-even-background-color":
+        #{$table-striped-row-even-background-color},
+      "table-striped-row-even-hover-background-color":
+        #{$table-striped-row-even-hover-background-color},
     )
   );
 }

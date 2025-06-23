@@ -48,13 +48,16 @@ $dropdown-divider-background-color: cv.getVar("border-weak") !default;
       "dropdown-item-l": #{$dropdown-item-l},
       "dropdown-item-background-l": #{$dropdown-item-background-l},
       "dropdown-item-background-l-delta": #{$dropdown-item-background-l-delta},
-      "dropdown-item-hover-background-l-delta": #{$dropdown-item-hover-background-l-delta},
-      "dropdown-item-active-background-l-delta": #{$dropdown-item-active-background-l-delta},
+      "dropdown-item-hover-background-l-delta":
+        #{$dropdown-item-hover-background-l-delta},
+      "dropdown-item-active-background-l-delta":
+        #{$dropdown-item-active-background-l-delta},
       "dropdown-item-color-l": #{$dropdown-item-color-l},
       "dropdown-item-selected-h": #{$dropdown-item-selected-h},
       "dropdown-item-selected-s": #{$dropdown-item-selected-s},
       "dropdown-item-selected-l": #{$dropdown-item-selected-l},
-      "dropdown-item-selected-background-l": #{$dropdown-item-selected-background-l},
+      "dropdown-item-selected-background-l":
+        #{$dropdown-item-selected-background-l},
       "dropdown-item-selected-color-l": #{$dropdown-item-selected-color-l},
       "dropdown-divider-background-color": #{$dropdown-divider-background-color},
     )
@@ -127,9 +130,8 @@ button.#{iv.$class-prefix}dropdown-item {
     #{cv.getVar("dropdown-item-h")},
     #{cv.getVar("dropdown-item-s")},
     calc(
-      #{cv.getVar("dropdown-item-background-l")} + #{cv.getVar(
-          "dropdown-item-background-l-delta"
-        )}
+      #{cv.getVar("dropdown-item-background-l")} +
+        #{cv.getVar("dropdown-item-background-l-delta")}
     )
   );
   padding-inline-end: 3rem;

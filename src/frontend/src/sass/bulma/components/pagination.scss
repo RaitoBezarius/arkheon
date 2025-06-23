@@ -70,16 +70,22 @@ $pagination-shadow-inset: inset 0 0.0625em 0.125em
       "pagination-item-h": #{$pagination-item-h},
       "pagination-item-s": #{$pagination-item-s},
       "pagination-item-l": #{$pagination-item-l},
-      "pagination-item-background-l-delta": #{$pagination-item-background-l-delta},
-      "pagination-item-hover-background-l-delta": #{$pagination-item-hover-background-l-delta},
-      "pagination-item-active-background-l-delta": #{$pagination-item-active-background-l-delta},
+      "pagination-item-background-l-delta":
+        #{$pagination-item-background-l-delta},
+      "pagination-item-hover-background-l-delta":
+        #{$pagination-item-hover-background-l-delta},
+      "pagination-item-active-background-l-delta":
+        #{$pagination-item-active-background-l-delta},
       "pagination-item-border-style": #{$pagination-item-border-style},
       "pagination-item-border-width": #{$pagination-item-border-width},
       "pagination-item-border-l": #{$pagination-item-border-l},
       "pagination-item-border-l-delta": #{$pagination-item-border-l-delta},
-      "pagination-item-hover-border-l-delta": #{$pagination-item-hover-border-l-delta},
-      "pagination-item-active-border-l-delta": #{$pagination-item-active-border-l-delta},
-      "pagination-item-focus-border-l-delta": #{$pagination-item-focus-border-l-delta},
+      "pagination-item-hover-border-l-delta":
+        #{$pagination-item-hover-border-l-delta},
+      "pagination-item-active-border-l-delta":
+        #{$pagination-item-active-border-l-delta},
+      "pagination-item-focus-border-l-delta":
+        #{$pagination-item-focus-border-l-delta},
       "pagination-item-color-l": #{$pagination-item-color-l},
       "pagination-item-font-size": #{$pagination-item-font-size},
       "pagination-item-margin": #{$pagination-item-margin},
@@ -92,17 +98,20 @@ $pagination-shadow-inset: inset 0 0.0625em 0.125em
       "pagination-nav-padding-left": #{$pagination-nav-padding-left},
       "pagination-nav-padding-right": #{$pagination-nav-padding-right},
       "pagination-disabled-color": #{$pagination-disabled-color},
-      "pagination-disabled-background-color": #{$pagination-disabled-background-color},
+      "pagination-disabled-background-color":
+        #{$pagination-disabled-background-color},
       "pagination-disabled-border-color": #{$pagination-disabled-border-color},
       "pagination-current-color": #{$pagination-current-color},
-      "pagination-current-background-color": #{$pagination-current-background-color},
+      "pagination-current-background-color":
+        #{$pagination-current-background-color},
       "pagination-current-border-color": #{$pagination-current-border-color},
       "pagination-ellipsis-color": #{$pagination-ellipsis-color},
       "pagination-shadow-inset": #{$pagination-shadow-inset},
       "pagination-selected-item-h": #{$pagination-selected-item-h},
       "pagination-selected-item-s": #{$pagination-selected-item-s},
       "pagination-selected-item-l": #{$pagination-selected-item-l},
-      "pagination-selected-item-background-l": #{$pagination-selected-item-background-l},
+      "pagination-selected-item-background-l":
+        #{$pagination-selected-item-background-l},
       "pagination-selected-item-border-l": #{$pagination-selected-item-border-l},
       "pagination-selected-item-color-l": #{$pagination-selected-item-color-l},
     )
@@ -176,18 +185,16 @@ $pagination-shadow-inset: inset 0 0.0625em 0.125em
     #{cv.getVar("pagination-item-h")},
     #{cv.getVar("pagination-item-s")},
     calc(
-      #{cv.getVar("pagination-item-background-l")} + #{cv.getVar(
-          "pagination-item-background-l-delta"
-        )}
+      #{cv.getVar("pagination-item-background-l")} +
+        #{cv.getVar("pagination-item-background-l-delta")}
     )
   );
   border-color: hsl(
     #{cv.getVar("pagination-item-h")},
     #{cv.getVar("pagination-item-s")},
     calc(
-      #{cv.getVar("pagination-item-border-l")} + #{cv.getVar(
-          "pagination-item-border-l-delta"
-        )}
+      #{cv.getVar("pagination-item-border-l")} +
+        #{cv.getVar("pagination-item-border-l-delta")}
     )
   );
   border-style: cv.getVar("pagination-item-border-style");

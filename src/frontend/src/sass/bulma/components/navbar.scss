@@ -125,8 +125,10 @@ $navbar-colors: dv.$colors !default;
       "navbar-item-background-a": #{$navbar-item-background-a},
       "navbar-item-background-l": #{$navbar-item-background-l},
       "navbar-item-background-l-delta": #{$navbar-item-background-l-delta},
-      "navbar-item-hover-background-l-delta": #{$navbar-item-hover-background-l-delta},
-      "navbar-item-active-background-l-delta": #{$navbar-item-active-background-l-delta},
+      "navbar-item-hover-background-l-delta":
+        #{$navbar-item-hover-background-l-delta},
+      "navbar-item-active-background-l-delta":
+        #{$navbar-item-active-background-l-delta},
       "navbar-item-color-l": #{$navbar-item-color-l},
       "navbar-item-color": #{$navbar-item-color},
       "navbar-item-selected-h": #{$navbar-item-selected-h},
@@ -137,12 +139,17 @@ $navbar-colors: dv.$colors !default;
       "navbar-item-img-max-height": #{$navbar-item-img-max-height},
       "navbar-burger-color": #{$navbar-burger-color},
       "navbar-tab-hover-background-color": #{$navbar-tab-hover-background-color},
-      "navbar-tab-hover-border-bottom-color": #{$navbar-tab-hover-border-bottom-color},
+      "navbar-tab-hover-border-bottom-color":
+        #{$navbar-tab-hover-border-bottom-color},
       "navbar-tab-active-color": #{$navbar-tab-active-color},
-      "navbar-tab-active-background-color": #{$navbar-tab-active-background-color},
-      "navbar-tab-active-border-bottom-color": #{$navbar-tab-active-border-bottom-color},
-      "navbar-tab-active-border-bottom-style": #{$navbar-tab-active-border-bottom-style},
-      "navbar-tab-active-border-bottom-width": #{$navbar-tab-active-border-bottom-width},
+      "navbar-tab-active-background-color":
+        #{$navbar-tab-active-background-color},
+      "navbar-tab-active-border-bottom-color":
+        #{$navbar-tab-active-border-bottom-color},
+      "navbar-tab-active-border-bottom-style":
+        #{$navbar-tab-active-border-bottom-style},
+      "navbar-tab-active-border-bottom-width":
+        #{$navbar-tab-active-border-bottom-width},
       "navbar-dropdown-background-color": #{$navbar-dropdown-background-color},
       "navbar-dropdown-border-l": #{$navbar-dropdown-border-l},
       "navbar-dropdown-border-color": #{$navbar-dropdown-border-color},
@@ -191,8 +198,7 @@ $navbar-colors: dv.$colors !default;
           "navbar-item-selected-background-l": #{cv.getVar($name, "", "-l")},
           "navbar-item-selected-color-l": #{cv.getVar($name, "", "-invert-l")},
           "navbar-dropdown-arrow": #{cv.getVar($name, "", "-invert-l")},
-          "navbar-dropdown-background-color":
-            hsl(
+          "navbar-dropdown-background-color": hsl(
               #{cv.getVar($name, "", "-h")},
               #{cv.getVar($name, "", "-s")},
               #{cv.getVar("navbar-dropdown-item-background-l")}
@@ -300,9 +306,8 @@ a.#{iv.$class-prefix}navbar-item,
     #{cv.getVar("navbar-h")},
     #{cv.getVar("navbar-s")},
     calc(
-      #{cv.getVar("navbar-item-background-l")} + #{cv.getVar(
-          "navbar-item-background-l-delta"
-        )}
+      #{cv.getVar("navbar-item-background-l")} +
+        #{cv.getVar("navbar-item-background-l-delta")}
     ),
     #{cv.getVar("navbar-item-background-a")}
   );
@@ -421,9 +426,8 @@ a.#{iv.$class-prefix}navbar-item,
         #{cv.getVar("navbar-dropdown-item-h")},
         #{cv.getVar("navbar-dropdown-item-s")},
         calc(
-          #{cv.getVar("navbar-dropdown-item-background-l")} + #{cv.getVar(
-              "navbar-item-background-l-delta"
-            )}
+          #{cv.getVar("navbar-dropdown-item-background-l")} +
+            #{cv.getVar("navbar-item-background-l-delta")}
         )
       );
       color: hsl(
@@ -493,9 +497,13 @@ a.#{iv.$class-prefix}navbar-item,
       bottom: 0;
 
       &.#{iv.$class-prefix}has-shadow {
-        box-shadow: 0 -0.125em 0.1875em hsla(#{cv.getVar("scheme-h")}, #{cv.getVar(
-                "scheme-s"
-              )}, #{cv.getVar("scheme-invert-l")}, 0.1);
+        box-shadow: 0 -0.125em 0.1875em
+          hsla(
+            #{cv.getVar("scheme-h")},
+            #{cv.getVar("scheme-s")},
+            #{cv.getVar("scheme-invert-l")},
+            0.1
+          );
       }
     }
 
@@ -565,9 +573,8 @@ a.#{iv.$class-prefix}navbar-item,
             #{cv.getVar("navbar-h")},
             #{cv.getVar("navbar-s")},
             calc(
-              #{cv.getVar("navbar-item-background-l")} + #{cv.getVar(
-                  "navbar-item-background-l-delta"
-                )}
+              #{cv.getVar("navbar-item-background-l")} +
+                #{cv.getVar("navbar-item-background-l-delta")}
             )
           );
 
@@ -620,9 +627,13 @@ a.#{iv.$class-prefix}navbar-item,
           cv.getVar("navbar-dropdown-radius") 0 0;
         border-top: none;
         bottom: 100%;
-        box-shadow: 0 -0.5em 0.5em hsla(#{cv.getVar("scheme-h")}, #{cv.getVar(
-                "scheme-s"
-              )}, #{cv.getVar("scheme-invert-l")}, 0.1);
+        box-shadow: 0 -0.5em 0.5em
+          hsla(
+            #{cv.getVar("scheme-h")},
+            #{cv.getVar("scheme-s")},
+            #{cv.getVar("scheme-invert-l")},
+            0.1
+          );
         top: auto;
       }
     }
@@ -694,9 +705,8 @@ a.#{iv.$class-prefix}navbar-item,
           #{cv.getVar("navbar-dropdown-item-h")},
           #{cv.getVar("navbar-dropdown-item-s")},
           calc(
-            #{cv.getVar("navbar-dropdown-item-background-l")} + #{cv.getVar(
-                "navbar-item-background-l-delta"
-              )}
+            #{cv.getVar("navbar-dropdown-item-background-l")} +
+              #{cv.getVar("navbar-item-background-l-delta")}
           )
         );
         color: hsl(
@@ -753,9 +763,13 @@ a.#{iv.$class-prefix}navbar-item,
       bottom: 0;
 
       &.#{iv.$class-prefix}has-shadow {
-        box-shadow: 0 -0.125em 0.1875em hsla(#{cv.getVar("scheme-h")}, #{cv.getVar(
-                "scheme-s"
-              )}, #{cv.getVar("scheme-invert-l")}, 0.1);
+        box-shadow: 0 -0.125em 0.1875em
+          hsla(
+            #{cv.getVar("scheme-h")},
+            #{cv.getVar("scheme-s")},
+            #{cv.getVar("scheme-invert-l")},
+            0.1
+          );
       }
     }
 
@@ -776,15 +790,15 @@ a.#{iv.$class-prefix}navbar-item,
 
     &.#{iv.$class-prefix}has-spaced-navbar-fixed-top {
       padding-top: calc(
-        #{cv.getVar("navbar-height")} + #{cv.getVar("navbar-padding-vertical")} *
-          2
+        #{cv.getVar("navbar-height")} +
+          #{cv.getVar("navbar-padding-vertical")} * 2
       );
     }
 
     &.#{iv.$class-prefix}has-spaced-navbar-fixed-bottom {
       padding-bottom: calc(
-        #{cv.getVar("navbar-height")} + #{cv.getVar("navbar-padding-vertical")} *
-          2
+        #{cv.getVar("navbar-height")} +
+          #{cv.getVar("navbar-padding-vertical")} * 2
       );
     }
   }

@@ -16,8 +16,9 @@ $flex-wrap-values: nowrap, wrap, wrap-reverse;
   }
 }
 
-$justify-content-values: flex-start, flex-end, center, space-between,
-  space-around, space-evenly, start, end, left, right;
+$justify-content-values:
+  flex-start, flex-end, center, space-between, space-around, space-evenly,
+  start, end, left, right;
 
 @each $value in $justify-content-values {
   .#{iv.$class-prefix}#{iv.$helpers-prefix}justify-content-#{$value} {
@@ -25,8 +26,9 @@ $justify-content-values: flex-start, flex-end, center, space-between,
   }
 }
 
-$align-content-values: flex-start, flex-end, center, space-between, space-around,
-  space-evenly, stretch, start, end, baseline;
+$align-content-values:
+  flex-start, flex-end, center, space-between, space-around, space-evenly,
+  stretch, start, end, baseline;
 
 @each $value in $align-content-values {
   .#{iv.$class-prefix}#{iv.$helpers-prefix}align-content-#{$value} {
@@ -34,8 +36,9 @@ $align-content-values: flex-start, flex-end, center, space-between, space-around
   }
 }
 
-$align-items-values: stretch, flex-start, flex-end, center, baseline, start, end,
-  self-start, self-end;
+$align-items-values:
+  stretch, flex-start, flex-end, center, baseline, start, end, self-start,
+  self-end;
 
 @each $value in $align-items-values {
   .#{iv.$class-prefix}#{iv.$helpers-prefix}align-items-#{$value} {

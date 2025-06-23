@@ -103,7 +103,8 @@ $no-palette: ("white", "black", "light", "dark");
       "button-active-border-color": #{$button-active-border-color},
       "button-text-color": #{$button-text-color},
       "button-text-decoration": #{$button-text-decoration},
-      "button-text-hover-background-color": #{$button-text-hover-background-color},
+      "button-text-hover-background-color":
+        #{$button-text-hover-background-color},
       "button-text-hover-color": #{$button-text-hover-color},
       "button-ghost-background": #{$button-ghost-background},
       "button-ghost-border-color": #{$button-ghost-border-color},
@@ -142,8 +143,7 @@ $no-palette: ("white", "black", "light", "dark");
       "button-outer-shadow-s": #{$button-outer-shadow-s},
       "button-outer-shadow-l": #{$button-outer-shadow-l},
       "button-outer-shadow-a": #{$button-outer-shadow-a},
-      "loading-color":
-        hsl(
+      "loading-color": hsl(
           #{cv.getVar("button-h")},
           #{cv.getVar("button-s")},
           #{cv.getVar("button-color-l")}
@@ -158,9 +158,8 @@ $no-palette: ("white", "black", "light", "dark");
     #{cv.getVar("button-h")},
     #{cv.getVar("button-s")},
     calc(
-      #{cv.getVar("button-background-l")} + #{cv.getVar(
-          "button-background-l-delta"
-        )}
+      #{cv.getVar("button-background-l")} +
+        #{cv.getVar("button-background-l-delta")}
     )
   );
   border-color: hsl(
@@ -197,24 +196,20 @@ $no-palette: ("white", "black", "light", "dark");
   height: auto;
   justify-content: center;
   padding-bottom: calc(
-    #{cv.getVar("button-padding-vertical")} - #{cv.getVar(
-        "button-border-width"
-      )}
+    #{cv.getVar("button-padding-vertical")} -
+      #{cv.getVar("button-border-width")}
   );
   padding-left: calc(
-    #{cv.getVar("button-padding-horizontal")} - #{cv.getVar(
-        "button-border-width"
-      )}
+    #{cv.getVar("button-padding-horizontal")} -
+      #{cv.getVar("button-border-width")}
   );
   padding-right: calc(
-    #{cv.getVar("button-padding-horizontal")} - #{cv.getVar(
-        "button-border-width"
-      )}
+    #{cv.getVar("button-padding-horizontal")} -
+      #{cv.getVar("button-border-width")}
   );
   padding-top: calc(
-    #{cv.getVar("button-padding-vertical")} - #{cv.getVar(
-        "button-border-width"
-      )}
+    #{cv.getVar("button-padding-vertical")} -
+      #{cv.getVar("button-border-width")}
   );
   text-align: center;
   white-space: nowrap;
@@ -383,12 +378,11 @@ $no-palette: ("white", "black", "light", "dark");
     @include cv.register-vars(
       (
         "button-border-width": max(1px, 0.0625em),
-        "loading-color":
-        hsl(
-          #{cv.getVar("button-h")},
-          #{cv.getVar("button-s")},
-          #{cv.getVar("button-l")}
-        ),
+        "loading-color": hsl(
+            #{cv.getVar("button-h")},
+            #{cv.getVar("button-s")},
+            #{cv.getVar("button-l")}
+          ),
       )
     );
 
@@ -429,9 +423,8 @@ $no-palette: ("white", "black", "light", "dark");
       #{cv.getVar("button-h")},
       #{cv.getVar("button-s")},
       calc(
-        #{cv.getVar("button-color-l")} + #{cv.getVar(
-            "button-background-l-delta"
-          )}
+        #{cv.getVar("button-color-l")} +
+          #{cv.getVar("button-background-l-delta")}
       )
     );
     color: hsl(
@@ -547,11 +540,13 @@ $no-palette: ("white", "black", "light", "dark");
   &.#{iv.$class-prefix}is-rounded {
     border-radius: cv.getVar("radius-rounded");
     padding-left: calc(
-      #{cv.getVar("button-padding-horizontal")} + #{$button-rounded-padding-horizontal-offset} -
+      #{cv.getVar("button-padding-horizontal")} +
+        #{$button-rounded-padding-horizontal-offset} -
         #{cv.getVar("button-border-width")}
     );
     padding-right: calc(
-      #{cv.getVar("button-padding-horizontal")} + #{$button-rounded-padding-horizontal-offset} -
+      #{cv.getVar("button-padding-horizontal")} +
+        #{$button-rounded-padding-horizontal-offset} -
         #{cv.getVar("button-border-width")}
     );
   }

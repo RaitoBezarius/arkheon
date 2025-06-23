@@ -19,7 +19,8 @@ $breadcrumb-item-separator-color: cv.getVar("border") !default;
       "breadcrumb-item-hover-color": #{$breadcrumb-item-hover-color},
       "breadcrumb-item-active-color": #{$breadcrumb-item-active-color},
       "breadcrumb-item-padding-vertical": #{$breadcrumb-item-padding-vertical},
-      "breadcrumb-item-padding-horizontal": #{$breadcrumb-item-padding-horizontal},
+      "breadcrumb-item-padding-horizontal":
+        #{$breadcrumb-item-padding-horizontal},
       "breadcrumb-item-separator-color": #{$breadcrumb-item-separator-color},
     )
   );
