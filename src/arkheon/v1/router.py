@@ -136,6 +136,34 @@ async def post_machine_deployment(
 
 
 @router.get(
+    "/deployment/{deployment}",
+    # response_model=Deployment,
+    tags=["Deployment"],
+)
+async def get_machine_deployment(
+    deployment: int,
+    db: AsyncSession = Depends(get_db),
+) -> Any:
+    try:
+        return DeploymentDTO.model_validate(
+            (
+                await db.execute(
+                    select(Deployment)
+                    .where(Deployment.id == deployment)
+                    .order_by(desc(Deployment.id))
+                )
+            )
+            .scalars()
+            .one()
+        )
+    except NoResultFound:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Deployment {deployment} not found",
+        )
+
+
+@router.get(
     "/deployment/{deployment}/diff",
     response_model=DeploymentDiff,
     tags=["Deployment"],
