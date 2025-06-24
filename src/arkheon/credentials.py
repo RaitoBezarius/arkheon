@@ -12,6 +12,7 @@ credentials = Credentials(env_prefix="ARKHEON_")
 class Settings:
     _defaults = {
         "DATABASE_URL": "sqlite+aiosqlite:///./arkheon.db",
+        "DEBUG": False,
         "TOKEN": None,
         "WEBHOOK_FILE": None,
     }
@@ -35,6 +36,9 @@ class Settings:
             return super().__getattribute__(name)
 
         return self._cached(name)
+
+    def _json(self, name: str):
+        return credentials.get_json(name, self._defaults.get(name, None))
 
 
 settings = Settings()

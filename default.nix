@@ -136,7 +136,10 @@ in
       pkgs.nodejs
     ] ++ git-checks.enabledPackages;
 
-    env.VITE_BACKEND_URL = "http://localhost:8000/api";
+    env = {
+      ARKHEON_DEBUG = "true";
+      VITE_BACKEND_URL = "http://localhost:8000/api";
+    };
 
     shellHook = ''
       export ARKHEON_DATABASE_URL="sqlite+aiosqlite:///$(git rev-parse --show-toplevel)/arkheon.db"

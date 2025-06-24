@@ -17,6 +17,8 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.orm import DeclarativeBase
 
+from arkheon.credentials import settings
+
 
 class Base(AsyncAttrs, DeclarativeBase):
     type_annotation_map = {
@@ -35,7 +37,7 @@ class DatabaseSessionManager:
         self._sessionmaker: async_sessionmaker | None = None
 
     def init(self, host: str):
-        self._engine = create_async_engine(host)
+        self._engine = create_async_engine(host, echo=settings._json("DEBUG"))
         self._sessionmaker = async_sessionmaker(
             autocommit=False,
             expire_on_commit=False,
