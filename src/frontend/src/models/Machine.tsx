@@ -13,6 +13,7 @@ export const Machine: Component<Machine> = (props) => {
   const [isExpanded, setExpanded] = createSignal(true);
   const [deployments, setDeployments] = createSignal<Deployment[]>([]);
 
+  const lastDeployment = () => deployments().at(0);
   const toggle = () => setExpanded((e) => !e);
 
   createEffect(() => {
@@ -35,13 +36,28 @@ export const Machine: Component<Machine> = (props) => {
           <span>{props.identifier}</span>
           <span class="tag ml-2 is-info">{deployments().length}</span>
         </b>
-        <Show when={deployments().length > 0}>
-          <a
-            href={`/diff/${deployments()[0].id}`}
-            class="tag is-primary ml-5 is-family-monospace"
-          >
-            {date(deployments()[0].created_at)}
-          </a>
+        <Show when={lastDeployment()}>
+          {(dep) => {
+            // Delta in days since the last deployment
+            const delta =
+              (Date.now() - new Date(`${dep().created_at}Z`).getTime()) /
+              (1000 * 86400);
+
+            return (
+              <a
+                href={`/diff/${dep().id}`}
+                class="tag ml-5 is-family-monospace"
+                classList={{
+                  "is-info": 1 >= delta,
+                  "is-success": 7 >= delta && delta > 1,
+                  "is-warning": 14 >= delta && delta > 7,
+                  "is-danger": delta > 14,
+                }}
+              >
+                {date(dep().created_at)}
+              </a>
+            );
+          }}
         </Show>
       </h3>
 
