@@ -19,7 +19,7 @@ export const get = async (
     path_ = path_.replace(`{${k}}`, `${v}`);
   }
 
-  return fetch(`${import.meta.env.VITE_BACKEND_URL}/${API_VERSION}${path_}`)
+  return fetch(`/api/${API_VERSION}${path_}`)
     .then((d) => {
       if (!d.ok) throw new Error(`API returned status ${d.status}`);
 

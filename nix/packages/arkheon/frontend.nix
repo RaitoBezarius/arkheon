@@ -31,8 +31,6 @@ buildNpmPackage {
 
   npmDepsHash = "sha256-J6LyUzAFHfCdI+gW7KqYDDR81/ChwQx1NOxutgv5jjI=";
 
-  env.VITE_BACKEND_URL = "@backend@";
-
   installPhase = ''
     mv dist $out
   '';

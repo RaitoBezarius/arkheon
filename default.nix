@@ -138,7 +138,6 @@ in
 
     env = {
       ARKHEON_DEBUG = "true";
-      VITE_BACKEND_URL = "http://localhost:8000/api";
     };
 
     shellHook = ''

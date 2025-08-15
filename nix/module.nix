@@ -21,7 +21,6 @@ let
     mkOption
     mkPackageOption
     optional
-    optionalString
     ;
 
   inherit (lib.types)
@@ -37,9 +36,6 @@ let
   inherit (utils) escapeSystemdExecArgs;
 
   cfg = config.services.arkheon;
-  hasSSL =
-    with config.services.nginx.virtualHosts.${cfg.domain};
-    onlySSL || enableSSL || addSSL || forceSSL;
 in
 
 {
@@ -133,10 +129,7 @@ in
           enable = true;
           virtualHosts.${cfg.domain}.locations = {
             "/" = {
-              root = pkgs.runCommand "arkheon-frontend" { nativeBuildInputs = [ pkgs.gnugrep ]; } ''
-                cp -R ${cfg.package.frontend} $out
-                substituteInPlace $(grep -l @backend@ $out/assets/*) --replace-fail @backend@ "http${optionalString hasSSL "s"}://${cfg.domain}/api"
-              '';
+              root = cfg.package.frontend;
               tryFiles = "$uri /index.html";
             };
 
