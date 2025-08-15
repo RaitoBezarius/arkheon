@@ -254,7 +254,7 @@ in
           path = [
             pkgs.coreutils
             pkgs.curl
-            pkgs.nettools
+            pkgs.net-tools
             pkgs.nix
           ];
 

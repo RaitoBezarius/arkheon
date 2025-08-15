@@ -46,8 +46,8 @@ let
           deadnix.settings.edit = true;
           nixfmt-rfc-style.package = pkgs.nixfmt-rfc-style;
 
-          prettier.package = pkgs.nodePackages.prettier;
-          eslint.package = pkgs.nodePackages.eslint;
+          prettier.package = pkgs.prettier;
+          eslint.package = pkgs.eslint;
 
           reuse = nix-reuse.hook { package = pkgs.reuse; };
           commitizen.enable = true;
