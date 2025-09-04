@@ -1,8 +1,10 @@
+###
+# This file was automatically generated with nix-reuse.
 version = 1
 [[annotations]]
 SPDX-FileCopyrightText = "NONE"
 SPDX-License-Identifier = "CC0-1.0"
-path = [".envrc", ".gitignore", ".flake8", "lon.lock", "lon.nix", "src/frontend/package-lock.json", "src/frontend/package.json", "src/frontend/tsconfig.json", "src/frontend/tsconfig.node.json", "src/frontend/vite.config.ts", "src/arkheon/migrations/versions/*.py"]
+path = [".envrc", ".gitignore", ".flake8", "nix/lon.lock", "src/frontend/package-lock.json", "src/frontend/package.json", "src/frontend/tsconfig.json", "src/frontend/tsconfig.node.json", "src/frontend/vite.config.ts", "src/arkheon/migrations/versions/*.py"]
 precedence = "closest"
 
 [[annotations]]

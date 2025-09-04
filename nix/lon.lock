@@ -15,10 +15,10 @@
       "type": "Git",
       "fetchType": "git",
       "branch": "main",
-      "revision": "45633dc6a0512cbbb010bc615b5d1b6e46e57597",
+      "revision": "3cd77b6fd38b767452c6493c8f41187ffc302e39",
       "url": "https://git.dgnum.eu/DGNum/nix-reuse.git",
-      "hash": "sha256-xr63AvDLp+RS0F7qwuOoWNENuepPbpuHLe4VPS85XBQ=",
-      "lastModified": 1737547777,
+      "hash": "sha256-oxTsDpEDl32B1fih/kT9uG8QmpIqqYPWhgkmJQWq1rw=",
+      "lastModified": 1756467183,
       "submodules": false
     },
     "nixpkgs": {
@@ -30,6 +30,16 @@
       "revision": "076e8c6678d8c54204abcb4b1b14c366835a58bb",
       "url": "https://github.com/NixOS/nixpkgs/archive/076e8c6678d8c54204abcb4b1b14c366835a58bb.tar.gz",
       "hash": "sha256-1ovgdmuDYVo5OUC5NzdF+V4zx2uT8RtsgZahxidBTyw="
+    },
+    "sprinkles": {
+      "type": "Git",
+      "fetchType": "git",
+      "branch": "v1",
+      "revision": "73fc40e9c2af5a8d3dfe7f6b67776b039188a2b6",
+      "url": "https://git.afnix.fr/sprinkles/sprinkles.git",
+      "hash": "sha256-0nXFeLrjz0zTt4QRd5EouAlC2Bl6JFHydKqB+oe97Zc=",
+      "lastModified": 1756180715,
+      "submodules": false
     }
   }
 }

@@ -42,11 +42,7 @@ in
   options.services.arkheon = {
     enable = mkEnableOption "Arkheon";
 
-    enableOverlay = (mkEnableOption "the Arkheon overlay") // {
-      default = true;
-    };
-
-    package = mkPackageOption pkgs.python3.pkgs "arkheon" { };
+    package = mkPackageOption pkgs "arkheon" { };
 
     record = {
       enable = mkEnableOption "Arkheon recording of deployments.";
@@ -126,8 +122,6 @@ in
 
   config = mkMerge [
     (mkIf cfg.enable {
-      nixpkgs.overlays = optional cfg.enableOverlay (import ./overlay.nix);
-
       services = {
         arkheon.environment.ARKHEON_DATABASE_URL = mkDefault "sqlite+aiosqlite:////var/lib/arkheon/arkheon.db";
 

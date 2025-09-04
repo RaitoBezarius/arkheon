@@ -2,16 +2,19 @@
 #
 # SPDX-License-Identifier: EUPL-1.2
 
-_: {
+{ sprinkle }:
+{ hostPkgs, ... }:
+{
   name = "arkheon";
 
   nodes.machine = {
-    imports = [ ../nix/module.nix ];
-    nixpkgs.overlays = [ (import ../nix/overlay.nix) ];
+    imports = [ sprinkle.output.nixosModule ];
 
     services.arkheon = {
       enable = true;
       domain = "arkheon";
+
+      package = hostPkgs.arkheon;
     };
 
     networking.firewall.allowedTCPPorts = [ 80 ];

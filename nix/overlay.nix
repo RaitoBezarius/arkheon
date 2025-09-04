@@ -2,11 +2,13 @@
 #
 # SPDX-License-Identifier: EUPL-1.2
 
-_final: prev: {
+final: prev: {
   pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
     (self: _super: {
       arkheon = self.callPackage ./packages/arkheon { };
-      loadcredential = self.callPackage ./packages/python-modules/loadcredential.nix { };
+      loadcredential = self.callPackage ./packages/loadcredential { };
     })
   ];
+
+  arkheon = with final.python3Packages; toPythonApplication arkheon;
 }
