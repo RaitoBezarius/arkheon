@@ -4,15 +4,9 @@
 
 const units = Array.of("KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB");
 
-type AbstractFunction = (_: any) => void;
-
 const API_VERSION = "v1";
 
-export const get = async (
-  path: string,
-  f: AbstractFunction,
-  ...args: [string, any][]
-) => {
+export const get = async (path: string, ...args: [string, any][]) => {
   let path_ = path;
 
   for (const [k, v] of args) {
@@ -25,8 +19,8 @@ export const get = async (
 
       return d.json();
     })
-    .then(f)
     .catch((e) => {
+      console.log(e);
       location.replace(`/api-error?error=${e}`);
     });
 };

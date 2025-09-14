@@ -63,6 +63,7 @@ const NavButton: Component<{
     </Show>
   );
 };
+
 export default function Diff() {
   const [diff, setDiff] = createSignal<Diff>();
   const [prev, setPrev] = createSignal<number | null>(null);
@@ -96,9 +97,8 @@ export default function Diff() {
     return pkgs;
   };
 
-  createEffect(() => {
-    get(
-      URLS.get_deployment_diff,
+  createEffect(async () => {
+    await get(URLS.get_deployment_diff, ["deployment", params.id]).then(
       (d: RawDiff) => {
         setDiff({
           added: mkPackages(d.added),
@@ -111,7 +111,6 @@ export default function Diff() {
         setPrev(d.navigation.prev);
         setNext(d.navigation.next);
       },
-      ["deployment", params.id],
     );
   });
 

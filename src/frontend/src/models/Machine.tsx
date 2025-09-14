@@ -2,7 +2,14 @@
 //
 // SPDX-License-Identifier: EUPL-1.2
 
-import { Component, For, createEffect, createSignal, Show } from "solid-js";
+import {
+  Component,
+  For,
+  Show,
+  createEffect,
+  createResource,
+  createSignal,
+} from "solid-js";
 import { Collapse } from "solid-collapse";
 import { Deployment } from "./Deployment.tsx";
 import { date, get } from "../utils";
@@ -11,17 +18,20 @@ import { IconChevronDown, IconChevronUp } from "@tabler/icons-solidjs";
 
 export const Machine: Component<Machine> = (props) => {
   const [isExpanded, setExpanded] = createSignal(false);
-  const [deployments, setDeployments] = createSignal<Deployment[]>([]);
+
+  const fetchDeployments = async () => {
+    return (await get(URLS.get_machine_deployments, [
+      "machine",
+      props.identifier,
+    ])) as Deployment[];
+  };
+
+  const [deployments] = createResource(fetchDeployments, { initialValue: [] });
 
   const lastDeployment = () => deployments().at(0);
   const toggle = () => setExpanded((e) => !e);
 
-  createEffect(() => {
-    get(URLS.get_machine_deployments, setDeployments, [
-      "machine",
-      props.identifier,
-    ]);
-  });
+  createEffect(() => {});
 
   return (
     <div class="box">
@@ -30,7 +40,7 @@ export const Machine: Component<Machine> = (props) => {
           <b>
             <span>{props.identifier}</span>
             <span class="tag ml-2 is-info">
-              {deployments() ? (
+              {deployments().length ? (
                 deployments().length
               ) : (
                 <b>No deployment available yet.</b>

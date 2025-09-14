@@ -2,25 +2,21 @@
 //
 // SPDX-License-Identifier: EUPL-1.2
 
-import { For, createEffect, createSignal } from "solid-js";
+import { For, createResource } from "solid-js";
 import { Machine } from "../models/Machine";
 import { get } from "../utils";
 import { URLS } from "../urls";
 
-export default function Home() {
-  const [machines, setMachines] = createSignal([]);
+const fetchMachines = async () => (await get(URLS.get_machines)) as Machine[];
 
-  createEffect(() => {
-    get(URLS.get_machines, setMachines);
+export default function Home() {
+  const [machines] = createResource(fetchMachines, {
+    initialValue: [],
   });
 
   return (
     <>
-      <div>
-        <For each={machines()}>
-          {(machine: Machine) => <Machine {...machine} />}
-        </For>
-      </div>
+      <For each={machines()}>{(machine) => <Machine {...machine} />}</For>
     </>
   );
 }
