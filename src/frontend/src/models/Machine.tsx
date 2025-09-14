@@ -10,7 +10,7 @@ import { URLS } from "../urls";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-solidjs";
 
 export const Machine: Component<Machine> = (props) => {
-  const [isExpanded, setExpanded] = createSignal(true);
+  const [isExpanded, setExpanded] = createSignal(false);
   const [deployments, setDeployments] = createSignal<Deployment[]>([]);
 
   const lastDeployment = () => deployments().at(0);
@@ -25,49 +25,55 @@ export const Machine: Component<Machine> = (props) => {
 
   return (
     <div class="box">
-      <button class="button is-small is-info is-pulled-right" onclick={toggle}>
-        <span class="icon">
-          {isExpanded() ? <IconChevronUp /> : <IconChevronDown />}
-        </span>
-      </button>
+      <section class="is-flex is-justify-content-space-between">
+        <h3>
+          <b>
+            <span>{props.identifier}</span>
+            <span class="tag ml-2 is-info">
+              {deployments() ? (
+                deployments().length
+              ) : (
+                <b>No deployment available yet.</b>
+              )}
+            </span>
+          </b>
+          <Show when={lastDeployment()}>
+            {(dep) => {
+              // Delta in days since the last deployment
+              const delta =
+                (Date.now() - new Date(`${dep().created_at}Z`).getTime()) /
+                (1000 * 86400);
 
-      <h3 classList={{ "mb-2": isExpanded() }}>
-        <b>
-          <span>{props.identifier}</span>
-          <span class="tag ml-2 is-info">{deployments().length}</span>
-        </b>
-        <Show when={lastDeployment()}>
-          {(dep) => {
-            // Delta in days since the last deployment
-            const delta =
-              (Date.now() - new Date(`${dep().created_at}Z`).getTime()) /
-              (1000 * 86400);
+              return (
+                <a
+                  href={`/diff/${dep().id}`}
+                  class="tag ml-4 is-family-monospace"
+                  classList={{
+                    "is-info": 1 >= delta,
+                    "is-success": 7 >= delta && delta > 1,
+                    "is-warning": 14 >= delta && delta > 7,
+                    "is-danger": delta > 14,
+                  }}
+                >
+                  {date(dep().created_at)}
+                </a>
+              );
+            }}
+          </Show>
+        </h3>
 
-            return (
-              <a
-                href={`/diff/${dep().id}`}
-                class="tag ml-5 is-family-monospace"
-                classList={{
-                  "is-info": 1 >= delta,
-                  "is-success": 7 >= delta && delta > 1,
-                  "is-warning": 14 >= delta && delta > 7,
-                  "is-danger": delta > 14,
-                }}
-              >
-                {date(dep().created_at)}
-              </a>
-            );
-          }}
-        </Show>
-      </h3>
+        <button class="button is-small is-info" onclick={toggle}>
+          <span class="icon">
+            {isExpanded() ? <IconChevronUp /> : <IconChevronDown />}
+          </span>
+        </button>
+      </section>
 
-      <Show
-        when={deployments().length > 0}
-        fallback={<p>No deployment available yet.</p>}
-      >
-        <Collapse value={isExpanded()}>
+      <Collapse value={isExpanded()}>
+        <Show when={deployments().length}>
+          <hr class="my-3" />
           <div class="table-container deployments">
-            <table class="table is-hoverable is-fullwidth is-striped mt-3">
+            <table class="table is-hoverable is-fullwidth is-striped">
               <tbody class="is-size-7">
                 <For each={deployments()}>
                   {(d: Deployment) => <Deployment {...d} />}
@@ -75,8 +81,8 @@ export const Machine: Component<Machine> = (props) => {
               </tbody>
             </table>
           </div>
-        </Collapse>
-      </Show>
+        </Show>
+      </Collapse>
     </div>
   );
 };
