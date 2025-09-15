@@ -2,18 +2,16 @@
 //
 // SPDX-License-Identifier: EUPL-1.2
 
-import { Component } from "solid-js";
+import { useSearchParams } from "@solidjs/router";
 
-const ApiError: Component = () => {
-  const params = new URLSearchParams(document.location.search);
+const ApiError = () => {
+  const [params] = useSearchParams();
 
   return (
-    <>
-      <div class="notification is-warning has-text-centered px-3 py-5">
-        <h1 class="title">{params.get("error")}</h1>
-        <a href="/">Go home</a>
-      </div>
-    </>
+    <div class="notification is-warning has-text-centered px-3 py-5">
+      <h1 class="title">{params.error}</h1>
+      <a href="/">Go home</a>
+    </div>
   );
 };
 
