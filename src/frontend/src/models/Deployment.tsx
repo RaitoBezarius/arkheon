@@ -3,31 +3,37 @@
 // SPDX-License-Identifier: EUPL-1.2
 
 import { Component } from "solid-js";
-import { date, size } from "../utils";
+import { date, size as _size } from "../utils";
 
-export const Deployment: Component<Deployment> = (props) => {
-  const [v, u] = size(Math.abs(props.size));
+export const Deployment: Component<Deployment> = ({
+  size,
+  created_at,
+  operator_id,
+  toplevel,
+  id,
+}) => {
+  const { value, unit } = _size(size);
 
   return (
     <tr>
       <td class="date">
-        <span class="is-family-monospace">{date(props.created_at)}</span>
+        <span class="is-family-monospace">{date(created_at)}</span>
       </td>
 
       <td>
         <span>
-          by&nbsp;<b>{props.operator_id}</b>
+          by&nbsp;<b>{operator_id}</b>
         </span>
       </td>
 
       <td>
-        <a class="is-family-monospace" href={`/diff/${props.id}`}>
-          {props.toplevel}
+        <a class="is-family-monospace" href={`/diff/${id}`}>
+          {toplevel}
         </a>
       </td>
 
       <td>
-        {v}&nbsp;{u}
+        {value}&nbsp;{unit}
       </td>
     </tr>
   );

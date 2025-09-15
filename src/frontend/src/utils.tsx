@@ -31,12 +31,16 @@ export const date = (s: string) =>
     dateStyle: "short",
   }).format(new Date(`${s}Z`));
 
-export const size = (bytes: number): [string, string] => {
+export const size = (bytes: number) => {
   const range = Math.trunc(Math.log2(Math.abs(bytes)) / 10);
 
-  if (range === 0 || bytes === 0) return [`${bytes}`, "B"];
+  if (range === 0 || bytes === 0)
+    return { value: `${Math.abs(bytes)}`, unit: "B" };
 
-  return [(bytes / Math.pow(1024, range)).toFixed(2), units[range - 1]];
+  return {
+    value: (Math.abs(bytes) / Math.pow(1024, range)).toFixed(2),
+    unit: units[range - 1],
+  };
 };
 
 export const sortVersions = (versions: Array<string | null>): Version[] => {
