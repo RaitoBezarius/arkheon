@@ -2,16 +2,11 @@
 //
 // SPDX-License-Identifier: EUPL-1.2
 
-import {
-  Component,
-  JSXElement,
-  Show,
-  createEffect,
-  createSignal,
-} from "solid-js";
+import { Show, createMemo, createResource } from "solid-js";
 import { useParams } from "@solidjs/router";
 import { date, get, sortVersions } from "../utils";
 import { Size } from "../components/Size";
+import { NavButton } from "../components/NavButton";
 import { PackageList } from "../models/PackageList";
 import { URLS } from "../urls";
 import { Dynamic } from "solid-js/web";
@@ -20,99 +15,54 @@ import {
   IconArrowMoveUpFilled,
 } from "@tabler/icons-solidjs";
 
-const NavButton: Component<{
-  id: number | null;
-  icon: JSXElement;
-  text: string;
-}> = (props) => {
-  const id = () => props.id;
-
-  const [loading, setLoading] = createSignal(false);
-  const [url, setUrl] = createSignal<string>();
-
-  createEffect(() => {
-    setUrl(`/diff/${id()}`);
-    setLoading(false);
-  });
-
-  const content = (
-    <>
-      <span class="icon">{props.icon}</span>
-      <span>{props.text}</span>
-    </>
+const mkPackages = (pkgs: RawPackages): Package[] =>
+  Object.entries(pkgs).map(([name, v]) =>
+    Array.isArray(v)
+      ? { name, size: v[1], versions: sortVersions(v[0]) }
+      : {
+          name,
+          size: v.new[1],
+          versions: sortVersions(v.new[0]),
+          previous: {
+            size: v.old[1],
+            versions: sortVersions(v.old[0]),
+          },
+        },
   );
-  return (
-    <Show
-      when={id()}
-      fallback={
-        <button class="button is-primary is-light" disabled>
-          {content}
-        </button>
-      }
-    >
-      <a
-        href={url()}
-        class="button is-primary is-light"
-        classList={{
-          "is-loading": loading(),
-        }}
-        onClick={() => setLoading(true)}
-      >
-        {content}
-      </a>
-    </Show>
-  );
-};
 
-export default function Diff() {
-  const [diff, setDiff] = createSignal<Diff>();
-  const [prev, setPrev] = createSignal<number | null>(null);
-  const [next, setNext] = createSignal<number | null>(null);
-
+const Diff = () => {
   const params = useParams();
 
-  const mkPackages = (_pkgs: RawPackages): Package[] => {
-    let pkgs: Package[] = [];
+  const [rawDiff] = createResource(
+    () => params.id,
+    async (id) =>
+      (await get(URLS.get_deployment_diff, ["deployment", id])) as RawDiff,
+  );
 
-    for (const [name, v] of Object.entries(_pkgs)) {
-      if (Array.isArray(v)) {
-        // The package is simple
-        const [vs, s] = v;
-
-        pkgs.push({ name: name, size: s, versions: sortVersions(vs) });
-      } else {
-        // The package is actually a diff
-        const [nv, ns] = v.new;
-        const [ov, os] = v.old;
-
-        pkgs.push({
-          name: name,
-          size: ns,
-          versions: sortVersions(nv),
-          previous: { size: os, versions: sortVersions(ov) },
-        });
-      }
-    }
-
-    return pkgs;
-  };
-
-  createEffect(async () => {
-    await get(URLS.get_deployment_diff, ["deployment", params.id]).then(
-      (d: RawDiff) => {
-        setDiff({
-          added: mkPackages(d.added),
-          removed: mkPackages(d.removed),
-          changed: mkPackages(d.changed),
-          sizes: d.sizes,
-          deployment: d.deployment,
-          machine: d.machine,
-        });
-        setPrev(d.navigation.prev);
-        setNext(d.navigation.next);
-      },
+  const navigate = (way: "prev" | "next") =>
+    createMemo<number | null>(
+      (val) => (rawDiff.state == "ready" ? rawDiff().navigation[way] : val),
+      null,
     );
-  });
+
+  const prev = navigate("prev");
+  const next = navigate("next");
+
+  const diff = createMemo<Diff | null>((prev) => {
+    if (rawDiff.state == "ready") {
+      const { added, removed, changed, sizes, deployment, machine } = rawDiff();
+      return {
+        added: mkPackages(added),
+        removed: mkPackages(removed),
+        changed: mkPackages(changed),
+        sizes,
+        deployment,
+        machine,
+      };
+    } else {
+      return prev;
+    }
+  }, null);
 
   return (
     <Show when={diff()}>
@@ -183,4 +133,6 @@ export default function Diff() {
       )}
     </Show>
   );
-}
+};
+
+export default Diff;
