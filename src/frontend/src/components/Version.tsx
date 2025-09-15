@@ -7,13 +7,13 @@ import { Component, Show } from "solid-js";
 export const Version: Component<{
   v: Version;
   cls?: string;
-}> = ({ v, cls = "" }) => {
+}> = (props) => {
   return (
-    <div class="control ">
+    <div class="control">
       <span class="tags has-addons">
-        <span class={`tag ${cls}`}>{v.value}</span>
-        <Show when={v.count > 1}>
-          <span class="tag is-white">&times;&nbsp;{v.count}</span>
+        <span class={`tag ${props.cls || ""}`}>{props.v.value}</span>
+        <Show when={props.v.count > 1}>
+          <span class="tag is-white">&times;&nbsp;{props.v.count}</span>
         </Show>
       </span>
     </div>
