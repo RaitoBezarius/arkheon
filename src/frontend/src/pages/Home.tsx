@@ -7,16 +7,13 @@ import { Machine } from "../models/Machine";
 import { get } from "../utils";
 import { URLS } from "../urls";
 
-const fetchMachines = async () => (await get(URLS.get_machines)) as Machine[];
-
-export default function Home() {
-  const [machines] = createResource(fetchMachines, {
-    initialValue: [],
-  });
-
-  return (
-    <>
-      <For each={machines()}>{(machine) => <Machine {...machine} />}</For>
-    </>
+const Home = () => {
+  const [machines] = createResource(
+    async () => (await get(URLS.get_machines)) as Machine[],
+    { initialValue: [] },
   );
-}
+
+  return <For each={machines()}>{(obj) => <Machine {...obj} />}</For>;
+};
+
+export default Home;
