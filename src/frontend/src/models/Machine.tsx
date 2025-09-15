@@ -2,14 +2,7 @@
 //
 // SPDX-License-Identifier: EUPL-1.2
 
-import {
-  Component,
-  For,
-  Show,
-  createEffect,
-  createResource,
-  createSignal,
-} from "solid-js";
+import { Component, For, Show, createResource, createSignal } from "solid-js";
 import { Collapse } from "solid-collapse";
 import { Deployment } from "./Deployment.tsx";
 import { date, get } from "../utils";
@@ -19,19 +12,16 @@ import { IconChevronDown, IconChevronUp } from "@tabler/icons-solidjs";
 export const Machine: Component<Machine> = (props) => {
   const [isExpanded, setExpanded] = createSignal(false);
 
-  const fetchDeployments = async () => {
-    return (await get(URLS.get_machine_deployments, [
-      "machine",
-      props.identifier,
-    ])) as Deployment[];
-  };
-
-  const [deployments] = createResource(fetchDeployments, { initialValue: [] });
+  const [deployments] = createResource(
+    async () =>
+      (await get(URLS.get_machine_deployments, [
+        "machine",
+        props.identifier,
+      ])) as Deployment[],
+    { initialValue: [] },
+  );
 
   const lastDeployment = () => deployments().at(0);
-  const toggle = () => setExpanded((e) => !e);
-
-  createEffect(() => {});
 
   return (
     <div class="box">
@@ -39,15 +29,16 @@ export const Machine: Component<Machine> = (props) => {
         <h3>
           <b>
             <span>{props.identifier}</span>
-            <span class="tag ml-2 is-info">
-              {deployments().length ? (
-                deployments().length
-              ) : (
-                <b>No deployment available yet.</b>
-              )}
-            </span>
+            <span class="tag ml-2 is-info">{deployments().length}</span>
           </b>
-          <Show when={lastDeployment()}>
+          <Show
+            when={lastDeployment()}
+            fallback={
+              <span class="tag ml-4">
+                <b>No deployment available yet.</b>
+              </span>
+            }
+          >
             {(dep) => {
               // Delta in days since the last deployment
               const delta =
@@ -72,7 +63,10 @@ export const Machine: Component<Machine> = (props) => {
           </Show>
         </h3>
 
-        <button class="button is-small is-info" onclick={toggle}>
+        <button
+          class="button is-small is-info"
+          onclick={() => setExpanded((e) => !e)}
+        >
           <span class="icon">
             {isExpanded() ? <IconChevronUp /> : <IconChevronDown />}
           </span>
