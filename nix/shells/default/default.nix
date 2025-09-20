@@ -13,11 +13,18 @@
 }:
 
 let
-  inherit (lib) concatMapStringsSep getAttr;
+  inherit (lib)
+    attrValues
+    concatMapStringsSep
+    genAttrs
+    getAttr
+    ;
 
-  git-hooks = import ../git-hooks.nix { inherit sprinkle; };
-  # nix-actions = import ../nix-actions.nix { inherit sprinkle; };
-  nix-reuse = import ../nix-reuse.nix { inherit sprinkle; };
+  shell-parts = genAttrs [
+    "git-hooks"
+    "nix-actions"
+    "nix-reuse"
+  ] (name: import (./.. + "/${name}.nix") { inherit sprinkle; });
 in
 
 mkShellNoCC {
@@ -27,20 +34,19 @@ mkShellNoCC {
     jq
     nodejs
     (python3.withPackages (ps: ps.arkheon.dependencies ++ ps.fastapi.optional-dependencies.standard))
-  ]
-  ++ git-hooks.enabledPackages;
+  ] ++ shell-parts.git-hooks.enabledPackages;
 
   env.ARKHEON_DEBUG = true;
 
-  shellHook = concatMapStringsSep "\n" (getAttr "shellHook") [
-    {
-      shellHook = ''
-        export ARKHEON_DATABASE_URL="sqlite+aiosqlite:///${toString sprinkle.output.src}/arkheon.db"
-        export ARKHEON_OPERATOR=$(whoami)
-      '';
-    }
-    git-hooks
-    nix-reuse
-    # nix-actions
-  ];
+  shellHook = concatMapStringsSep "\n" (getAttr "shellHook") (
+    attrValues shell-parts
+    ++ [
+      {
+        shellHook = ''
+          export ARKHEON_DATABASE_URL="sqlite+aiosqlite:///${toString sprinkle.output.src}/arkheon.db"
+          export ARKHEON_OPERATOR=$(whoami)
+        '';
+      }
+    ]
+  );
 }

@@ -1,0 +1,25 @@
+###
+# This file was automatically generated with nix-actions.
+"jobs":
+  "pre-push":
+    "runs-on": |-
+      ubuntu-latest
+    "steps":
+    - "uses": |-
+        actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+    - "uses": |-
+        samueldr/lix-gha-installer-action@8dc19fbd6451fa106a68ecb2dafeeeb90dff3a29
+    - "name": |-
+        Run pre-commit [pre-push] on all files
+      "run": |-
+        nix-shell -A output.shells.pre-commit --run 'set -o errexit
+        set -o nounset
+        set -o pipefail
+        pre-commit run --all-files --hook-stage pre-push --show-diff-on-failure'
+"name": |-
+  Run pre-commit on all files
+"on":
+- |-
+  push
+- |-
+  pull_request

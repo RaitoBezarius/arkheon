@@ -45,15 +45,17 @@ sprinkle.input.git-hooks.run {
         })
       )
       {
-        statix.settings.ignore = [ "**/lon.nix" ];
+        action-validator = sprinkle.input.nix-actions.gitHook { };
+
         deadnix.settings.edit = true;
         nixfmt-rfc-style.package = nixfmt-rfc-style;
+        statix.settings.ignore = [ "**/lon.nix" ];
 
-        prettier.package = prettier;
         eslint.package = eslint;
+        prettier.package = prettier;
 
         commitizen.stages = [ "commit-msg" ];
 
-        reuse = sprinkle.input.nix-reuse.output.gitHook { };
+        reuse = sprinkle.input.nix-reuse.gitHook { };
       };
 }

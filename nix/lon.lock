@@ -11,6 +11,16 @@
       "url": "https://github.com/cachix/git-hooks.nix/archive/623c56286de5a3193aa38891a6991b28f9bab056.tar.gz",
       "hash": "sha256-WUaIlOlPLyPgz9be7fqWJA5iG6rHcGRtLERSCfUDne4="
     },
+    "nix-actions": {
+      "type": "Git",
+      "fetchType": "git",
+      "branch": "main",
+      "revision": "2b829a9978d21e22d24c6a27b389d698b4ea5d09",
+      "url": "https://git.afnix.fr/thubrecht/nix-actions",
+      "hash": "sha256-X+hbOrL8S9Z1B3yZMVOQPKI2vHmD1IfGEh2UOQ1T5/0=",
+      "lastModified": 1756467069,
+      "submodules": false
+    },
     "nix-reuse": {
       "type": "Git",
       "fetchType": "git",

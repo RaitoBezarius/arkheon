@@ -4,7 +4,7 @@
 
 { sprinkle }:
 
-sprinkle.input.nix-reuse.output.run {
+sprinkle.input.nix-reuse.run {
   defaultLicense = "EUPL-1.2";
   defaultCopyright = "Tom Hubrecht <github@mail.hubrecht.ovh>";
 
@@ -14,6 +14,8 @@ sprinkle.input.nix-reuse.output.run {
     ".envrc"
     ".gitignore"
     ".flake8"
+    ".prettierignore"
+    ".github/workflows/*"
 
     "nix/lon.lock"
 

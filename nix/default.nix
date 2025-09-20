@@ -16,9 +16,15 @@ let
       config.allowAliases = false;
     };
 
-    nix-reuse = (import source.nix-reuse { }).override {
-      source = { inherit (source) nixpkgs; };
-    };
+    nix-actions =
+      ((import source.nix-actions { }).override {
+        input = _: { inherit (input source) nixpkgs sprinkles; };
+      }).output;
+
+    nix-reuse =
+      ((import source.nix-reuse { }).override {
+        input = _: { inherit (input source) nixpkgs sprinkles; };
+      }).output;
 
     nixos-lib = import (source.nixpkgs + "/nixos/lib") { };
 
@@ -41,7 +47,10 @@ in
       packages.default = pkgs.arkheon;
       package = self.output.packages.default;
 
-      shells.default = pkgs.callPackage ./shells/default { sprinkle = self; };
+      shells = {
+        default = pkgs.callPackage ./shells/default { sprinkle = self; };
+        pre-commit = pkgs.callPackage ./shells/pre-commit { sprinkle = self; };
+      };
 
       overlays.default = import ./overlay.nix;
       overlay = self.output.overlays.default;
@@ -54,6 +63,22 @@ in
         hostPkgs = pkgs; # the Nixpkgs package set used outside the VMs
       };
 
+      workflows = {
+        pre-commit = import ./workflows/pre-commit { sprinkle = self; };
+      };
+
       src = ../.;
+
+      actions-steps = self.input.nix-actions.lib.steps {
+        checkout = {
+          defaultVersion = "08c6903cd8c0fde910a37f88322edcfb5dd907a8";
+          url = "actions/checkout";
+        };
+
+        lix-installer = {
+          defaultVersion = "8dc19fbd6451fa106a68ecb2dafeeeb90dff3a29";
+          url = "samueldr/lix-gha-installer-action";
+        };
+      };
     };
 }
