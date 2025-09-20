@@ -65,6 +65,7 @@ in
 
       workflows = {
         pre-commit = import ./workflows/pre-commit { sprinkle = self; };
+        tests = import ./workflows/tests { sprinkle = self; };
       };
 
       src = ../.;
